@@ -1,4 +1,4 @@
-## Raphael 
+## Raphael
 
 Ideas:
 
@@ -19,11 +19,9 @@ Using movie metadata (movie.metadata.tsv), which includes data on genres, box of
 How did Donald Trump's election and patriotic rhetoric influence the U.S. film industry? We will analyse whether Trump's emphasis on "American values" and patriotism has led to an increase in the production of patriotic-themed films, biographical films about American heroes, and war narratives, and whether these themes have contributed to higher box office revenues.
 For this, we will utilise publicly available data on Trump's political discourse, such as Twitter posts and surveys, to detect a growing focus on patriotism during Trump's presidency campaign. Moreover, by utilising the movie metadata (movie.metadata.tsv) on genres and earnings, as well as parsing plot summaries (plot_summaries.txt) for keywords like "patriotism," "America," and "hero," we examine the influence of such a focus shift on film content. With this we aim to find out if Trump’s presidency campaign and his political rhetoric has shaped the cultural output of the American film industry.
 
-
 Answer from TA: --> Grade: Great
 
 Overall, the proposal demonstrates strong potential for insightful analysis of historical and political influences on cinema.\\\\Idea 1: Influence of U.S. Political Activism on Diversity in Movie Characters\\\\Strong but needs more focus. The analysis of how political movements influenced diversity in global cinema is highly relevant, and the focus on specific movements adds depth. The methodology is solid, but the global aspect of the analysis could be challenging. More clarity on how global vs. U.S. film industries will be compared, and how diverse casts will be defined and measured, would strengthen the proposal. The use of plot summaries to identify political issues is a great addition, but the process for parsing and analyzing these summaries could be more detailed.\\Idea 2: Influence of Economic Uncertainty on Movie Genres\\\\Interesting and timely. Analyzing how economic crises influence movie genres is a compelling idea. The hypothesis that people turn to escapist genres during tough times is strong, but more detail is needed on how "escapist" genres will be defined and measured. The analysis of regional differences in response to economic uncertainty is a good addition, but how these differences will be identified and compared should be clarified. Additionally, the method for linking economic data with film data could be elaborated further.\\Idea 3: Patriotism in Film: Impact of Donald Trump's Election on Box Office Trends\\\\Unique but needs refinement. The idea of analyzing how Trump's election and patriotic rhetoric influenced film production and box office trends is intriguing. The methodology of using Trump's public discourse (e.g., Twitter posts) to detect a shift in patriotic themes is creative, but more details on how this data will be connected to film content and box office performance would strengthen the proposal. Additionally, the process of keyword analysis in plot summaries could be expanded to ensure a robust analysis of how patriotism is portrayed in films.
-
 
 ## Emma
 
@@ -44,7 +42,6 @@ Third idea: are we really more attracted to low-complexity movies?
 
 To answer this, summaries and subtitles will be used to assess movies' complexity (using the datasets listed in idea 1). A list of keywords can help to determine whether a plot is rich or linear, recurrent or original, etc. From the subtitles, information on the richness of language can be extracted. By doing this over various decades, the aim is to identify if a (decreasing) trend in complexity exists. Additional factors can strengthen the classification: movie duration, genres, music, etc.  
 Finally, the plot could be enriched with a tag analysis, using movie tags (from the MovieLens dataset) such as "thought-provoking" or "complex plot" to assess movies complexity. Or even with a review on sentiment analysis, using IMDB reviews to determine the audience's perception of complexity.
-
 
 Answer from TA: --> Grade: Great
 
@@ -83,3 +80,33 @@ Super relevant and creative! Exploring the ecological impact of filmmaking is un
 
 Idea 3: How we envision the future
 Good concept, but could use more clarity on how past visions of the future will be systematically compared with real-world events. Ensure there's enough data to make meaningful correlations.
+
+## Lulu
+
+### Ideas
+
+1) **Star Power Unveiled - What Makes the Greatest Cast?**
+What makes a cast appeal to both audiences and critics? Beyond box office numbers, this project explores the hidden factors that determine whether a cast becomes legendary or forgettable. We will use metadata from the CMU Movie Summary Corpus to investigate the casting process. How a mix of established stars, young talent, and diversity in gender, ethnicity, and genre experience contributes to a movie’s success.
+By combining film reviews (IMDb, Rotten Tomatoes) with box office performance, we will uncover patterns behind casting decisions. Do experienced actors outperform newcomers, or does chemistry and diversity within the cast capture audiences? Can we predict which combinations of actors and genres produce hits and critical acclaim?
+We will also explore how actors excel in different roles: do comedic actors thrive in dramas? Does casting diversity across genres increase the likelihood of success? This analysis will reveal casting strategies that elevate a film from average to iconic.
+This project will provide insights into how casting directors can assemble the most attractive cast for success, looking beyond typical selections to identify the hidden patterns that make star power shine.
+2) **The Final Cut - How Movie Endings Shape Success**
+This project explores how the tone of a film's ending (positive, negative, or ambiguous) affects its box office performance and critical reception. Using the CMU Movie Summary Corpus, we will categorize endings through sentiment analysis of plot summaries (e.g., tragic, open-ended). We will then analyze correlations between different ending types and audience satisfaction, critical reviews, and box office success.
+To enhance the analysis, we may include data from IMDb or social media to see real-time audience reactions. Do happy endings outperform darker conclusions? Is there a link between genre and preferred ending types? Do films with ambiguous endings struggle initially but develop adoration followings over time?
+This project will provide insights into how a film's conclusion affects its legacy, allowing directors to make informed narrative decisions to boost audience engagement and box office performance.
+3) **Cinema as Catalyst - How Films Influence Societal Change**
+This project will explore how films that tackle themes of dictatorship, democracy, or social injustice influence societal debate and potentially drive change. Using the CMU Movie Summary Corpus, we will identify movies with political or justice-related plots. By integrating datasets of significant political events (e.g., democratic movements, revolutions, or major protests) from the Global Database of Events, Language, and Tone (GDELT), which covers the period from 1979 to 2014, we will analyze correlations between the release of such films and shifts in public activism.
+We will also examine Google search trends to measure the impact of these films on public interest. For example, if a movie focuses on feminism does it cause a spike in searches? Do politically charged films raise awareness and encourage internet engagement? Through both public interest and historical events, this analysis will uncover the influence of cinema on societal values, political engagement, and long-term political outcomes.
+
+Answer from TA: --> Grade: Excellent
+
+This proposal presents three excellent and creative ideas with clear paths for execution. Each idea is well-structured, innovative, and makes great use of available data. The balance between creativity and analytical rigor is strong, making this proposal stand out.
+
+**Idea 1:** Star Power Unveiled
+Excellent! This concept is both insightful and practical. Analyzing cast dynamics and their impact on a film’s success provides a fresh angle. The use of both critical reviews and box office data is a strong approach, and exploring diversity and genre versatility adds depth.
+
+**Idea 2:** The Final Cut
+Great idea! The relationship between movie endings and their success is an underexplored area. Sentiment analysis of plot summaries is a smart method. Be mindful of how different genres may skew audience expectations of endings.
+
+**Idea 3:** Cinema as Catalyst
+Super insightful! This idea effectively connects cinema with societal change, providing a timely analysis. Using datasets like GDELT to track the societal impact of political films is a great approach. This project has strong potential to uncover meaningful correlations between film and public activism.
