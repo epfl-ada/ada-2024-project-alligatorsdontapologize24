@@ -54,23 +54,38 @@ Overall, your proposal raises several interesting and important questions, espec
 
 1] Actors vs. Characters: How far are they?
 
-Without actors, characters wouldn’t come alive. But how similar are actors to the characters they play? Movies often serve as a window into the world, and we frequently compare ourselves to on-screen characters. This raises several perspectives.\n
+Without actors, characters wouldn’t come alive. But how similar are actors to the characters they play? Movies often serve as a window into the world, and we frequently compare ourselves to on-screen characters. This raises several perspectives.
+
 Is there a significant gap between the ages of characters and their actors? Does this differ by period or gender? What about ethnic representation?\\
-Do specific actors tend to get "typecast" or play roles similar to their first successful character? Can we find correlations between actors' real-life traits and the roles they are assigned?\\
+Do specific actors tend to get "typecast" or play roles similar to their first successful character? Can we find correlations between actors' real-life traits and the roles they are assigned?
+
 To explore these questions, we will analyze the dataset on both characters and actors and incorporate movie dialogue from the Cornell Movie-Dialogs Corpus. External databases can give more information about actors, like the UCI movie dataset, which includes actor roles and movie citations, and the Wikiperson dataset, which provides detailed information about actors. Similarly to how the paper identified character types, we could extract actor archetypes to match actor and character types.
 
 2] Can movies rhyme with eco-friendly?
 
-The voice of ecology has gained strength over the past century, but is this reflected in the film industry? This question can be viewed from two main perspectives.\\
-First, how is the theme of ecology treated in movies? This section will examine documentaries, fiction, and films that address ecological issues. We will analyze movie themes and dialogue, investigating if eco-anxiety and ecological catastrophe have become more prevalent recently. Does this representation change with social and political contexts or major environmental events? We could use the SPEED database for historical events and the International Disaster Database for environmental events.\\
+The voice of ecology has gained strength over the past century, but is this reflected in the film industry? This question can be viewed from two main perspectives.
+
+First, how is the theme of ecology treated in movies? This section will examine documentaries, fiction, and films that address ecological issues. We will analyze movie themes and dialogue, investigating if eco-anxiety and ecological catastrophe have become more prevalent recently. Does this representation change with social and political contexts or major environmental events? We could use the SPEED database for historical events and the International Disaster Database for environmental events.
+
 Secondly, creating a movie has a significant ecological impact. Is there a trend toward a more sustainable film industry? This question is more challenging to address due to the lack of extensive databases on the impact of individual films. However, we can explore environmental certifications for films, such as those found in the Green Film Database, and extract selected films and their features.
 
 3] Flying cars? Martian attack? Ecological tragedy? A story about how we envision the future.
 
-Humans have always imagined what the future might look like, speculating about future technologies, societal changes, environmental issues... The CMU dataset spans movies from 1888 to 2018, offering a unique opportunity to explore how visions of the future have evolved.\\
-How do we imagine the future depending on the period, country, or economic and political events? Can we compare past visions with today's reality?\\
+Humans have always imagined what the future might look like, speculating about future technologies, societal changes, environmental issues... The CMU dataset spans movies from 1888 to 2018, offering a unique opportunity to explore how visions of the future have evolved.
+
+How do we imagine the future depending on the period, country, or economic and political events? Can we compare past visions with today's reality?
+
 To answer these questions, we'll first extract movies that envision the future and analyze their genres, plot summaries, and geographical origin. Then, by aligning political and historical events with the cinematographic timeline, we can investigate how filmmakers envision the future correlates with real-world events. For example, we could use external historical and political event databases such as SPEED, to identify key global events and assess their influence on these evolving visions of the future.
 
 Answer from TA: --> Grade: Great
 
-This proposal includes interesting and creative ideas, especially the first two. The third idea is also strong but may require more data refinement. Overall, clear direction but could benefit from more execution details.\\\\Idea 1: Actors vs. Characters\\\\Great idea! The comparison between actors' real-life traits and their characters is compelling. Be cautious about data availability for correlating personal traits with character roles.\\Idea 2: Can movies rhyme with eco-friendly?\\\\Super relevant and creative! Exploring the ecological impact of filmmaking is unique. However, addressing the lack of comprehensive data on sustainability in film may be challenging.\\Idea 3: How we envision the future\\\\Good concept, but could use more clarity on how past visions of the future will be systematically compared with real-world events. Ensure there's enough data to make meaningful correlations.
+This proposal includes interesting and creative ideas, especially the first two. The third idea is also strong but may require more data refinement. Overall, clear direction but could benefit from more execution details.
+
+Idea 1: Actors vs. Characters
+Great idea! The comparison between actors' real-life traits and their characters is compelling. Be cautious about data availability for correlating personal traits with character roles.
+
+Idea 2: Can movies rhyme with eco-friendly?
+Super relevant and creative! Exploring the ecological impact of filmmaking is unique. However, addressing the lack of comprehensive data on sustainability in film may be challenging.
+
+Idea 3: How we envision the future
+Good concept, but could use more clarity on how past visions of the future will be systematically compared with real-world events. Ensure there's enough data to make meaningful correlations.
