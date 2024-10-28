@@ -54,7 +54,7 @@ Overall, your proposal raises several interesting and important questions, espec
 
 1] Actors vs. Characters: How far are they?
 
-Without actors, characters wouldn’t come alive. But how similar are actors to the characters they play? Movies often serve as a window into the world, and we frequently compare ourselves to on-screen characters. This raises several perspectives.\\
+Without actors, characters wouldn’t come alive. But how similar are actors to the characters they play? Movies often serve as a window into the world, and we frequently compare ourselves to on-screen characters. This raises several perspectives.\n
 Is there a significant gap between the ages of characters and their actors? Does this differ by period or gender? What about ethnic representation?\\
 Do specific actors tend to get "typecast" or play roles similar to their first successful character? Can we find correlations between actors' real-life traits and the roles they are assigned?\\
 To explore these questions, we will analyze the dataset on both characters and actors and incorporate movie dialogue from the Cornell Movie-Dialogs Corpus. External databases can give more information about actors, like the UCI movie dataset, which includes actor roles and movie citations, and the Wikiperson dataset, which provides detailed information about actors. Similarly to how the paper identified character types, we could extract actor archetypes to match actor and character types.
