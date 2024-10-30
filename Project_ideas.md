@@ -110,3 +110,28 @@ Great idea! The relationship between movie endings and their success is an under
 
 **Idea 3:** Cinema as Catalyst
 Super insightful! This idea effectively connects cinema with societal change, providing a timely analysis. Using datasets like GDELT to track the societal impact of political films is a great approach. This project has strong potential to uncover meaningful correlations between film and public activism.
+
+
+## Jen 
+
+1) **Does watching movies make you happy?**
+Philosophy and psychology may have something to say about this, but what can data analysis reveal? Can computed data analysis become a third lens in understanding this relationship? To investigate, common movies between the CMU and IMDb datasets will be analyzed. Sentiment analysis of IMDb reviews will be conducted and compared with the year-specific World Happiness Report. A movie's reception will serve as a basis for examining its potential impact on global happiness. If a movie is well received, regardless of its topic, does it influence the mood of audiences worldwide? Has society become dependent on its entertainment industry, or is it the other way around—does people's happiness affect how they perceive a film? This question may be as elusive as “Which came first: the chicken or the egg?” First, is the impact of movies on happiness real, or just speculative? Statistical relevance will be tested. Can we find a correlation, and if so, how strong is it? Finally, patterns will be explored, such as whether a rise in movie viewership corresponds to increased happiness. Ultimately, we may get closer to solving the "egg problem."
+
+2) **The Role of Politics in Cinematography**
+Politics influence our lives in many ways. Our nationality can affect our rights and shape our beliefs. Can we see these roles reflected in cinematography? All levels will be considered—from the location of the movie set to the nationality of the producer and actors. But the investigation won't stop there. Metrics like literacy and wealth (e.g., GDP) of the country where the movie is released will also be taken into account. What if we go further and examine the main action setting? Does fantasy mimic reality, or does it oppose it? Are rebellions more prominent in democratic countries, for instance? A map will be created based on these findings. Time and socio-economic context will also be factored in. All data will be analyzed by decade to enable meaningful comparisons.
+
+3) **Identity Card of the Hero and the Villain Biases are present in cinematography.**
+
+Everyone has in mind the voluptuous woman in distress and her savior—an athletic, good-looking man. But what is the depth of these prejudices? Is it possible to identify the hero's characteristics and those of his antagonist? Are nationality, age, and gender part of these traits? What are the other hidden traits of these protagonists? By leveraging the work of Bamman et al. on persona, protagonists will be filtered. Can key features be identified? Can we observe the well-known stereotypes? Perhaps there isn't a global definition of our hero and villain. It might be country- or time-dependent. If so, maps or timelines will be created to reflect these changes and enable comparisons with social movements such as the rise of feminism or nationalism.
+
+**General comment**
+This proposal presents creative ideas with clear potential. Ideas 1 and 2 are particularly strong, while Idea 3 may need refinement in data analysis. Overall, well thought out but with minor challenges in execution.
+
+**Idea 1: Does watching movies make you happy?**
+Great idea! Sentiment analysis and happiness correlation are interesting. Be cautious about isolating movie effects from other societal influences.
+
+**Idea 2: The Role of Politics in Cinematography**
+Super creative! Mapping political influences is compelling. Simplify variables to avoid overcomplication.
+
+**Idea 3: Identity Card of the Hero and the Villain**
+Interesting but data extraction may be complex. Refine how to handle character traits across periods and regions.
