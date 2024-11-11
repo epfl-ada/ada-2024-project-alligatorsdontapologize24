@@ -1,3 +1,17 @@
+"""
+Twitter Sentiment analysis script
+--------------------------------------
+This script implement the sentiment analysis model of twitter.
+Given a text, the model return a sentiment analysis that sum to 1.
+Score is a array :
+"joy": Score[0],
+"optimism": Score[1],
+"anger": Score[3],
+"sadness": Score[4]
+source : https://huggingface.co/cardiffnlp/twitter-roberta-base-emotion
+"""
+
+
 from transformers import AutoModelForSequenceClassification
 from transformers import TFAutoModelForSequenceClassification
 from transformers import AutoTokenizer

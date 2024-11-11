@@ -1,3 +1,18 @@
+"""
+DistillBERT Sentiment analysis script
+--------------------------------------
+This script implement a distill-BERT model, trained for sentiment analysis.
+Given a text, the model return a sentiment analysis that sum to 1.
+Result is a array :
+"sadness": result[0],
+ "joy": result[1],
+ "love": result[2],
+"anger": result[3],
+"fear": result[4],
+"surprise": result[5]
+source : https://huggingface.co/bhadresh-savani/distilbert-base-uncased-emotion
+"""
+
 # Use a pipeline as a high-level helper
 from transformers import pipeline
 import torch
@@ -10,7 +25,6 @@ pipe = pipeline("text-classification", model="bhadresh-savani/distilbert-base-un
 class ViolenceDetector:
     def __init__(self):
         # Initialize tokenizer and model
-
         self.tokenizer = DistilBertTokenizer.from_pretrained("bhadresh-savani/distilbert-base-uncased-emotion")
         self.model = DistilBertForSequenceClassification.from_pretrained("bhadresh-savani/distilbert-base-uncased-emotion")
         
@@ -47,25 +61,19 @@ class ViolenceDetector:
         return chunked_inputs,total_length
     
     def analyze_violence(self, plot_text):
-        # Combine model prediction with keyword analysis
         inputs,total_length = self.preprocess_text(plot_text)
 
-        sadness_score = 0
-        anger_score = 0
-        fear_score = 0
-        
+        prediction_score = torch.zeros(6)
+
         with torch.no_grad():
             for part in inputs :
                 outputs = self.model(**part)
                 predictions = softmax(outputs.logits, dim=1)
-                sadness_score +=predictions[0][0].item()*part['input_ids'].size(1)/total_length
-                anger_score +=predictions[0][3].item()*part['input_ids'].size(1)/total_length
-                fear_score +=predictions[0][4].item()*part['input_ids'].size(1)/total_length
+                prediction_score += predictions[0] * (part['input_ids'].size(1) / total_length)
 
             
-        return {
-            'sadness_score': sadness_score,
-            'anger_score': anger_score,
-            'fear_score': fear_score,
-        }
+        return prediction_score.numpy()
+
+
+        
 
