@@ -25,6 +25,13 @@ class DataLoader:
             if file not in (".DS_Store", ".ipynb_checkpoints"):
                 print(file)
 
+    def clean_movie_data(self):
+        
+        MovieData = pd.read_csv(self.CLEAN_DATA_PATH+"/Movie_Data_clean.tsv",
+                                sep='\t',
+                               index_col=["Wikipedia movie ID"])
+        
+        return MovieData
 
     def movie_data(self):
         print("\nload CMU movie metadata\n")
