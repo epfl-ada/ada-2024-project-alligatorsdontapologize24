@@ -75,6 +75,7 @@ class DataLoader:
 
     #load all raw data
     def load_all_data(self):
+        
         return self.movie_data(),self.plot_data(),self.GVD_data(),self.Kaggle_data()
 
     def clean_movie_data(self):
@@ -89,3 +90,15 @@ class DataLoader:
         ViolentData = pd.read_excel(self.RAW_DATA_PATH+"/Human_labelling_violentMovie.xlsx",sheet_name='data')
         ViolentLabel = pd.read_excel(self.RAW_DATA_PATH+"/Human_labelling_violentMovie.xlsx",sheet_name='label')
         return ViolentLabel,ViolentData
+
+    def Violent_word_list(self,keyword):
+        match keyword:
+            case "Physical_violence" :
+                WordList = pd.read_excel(self.CLEAN_DATA_PATH+"/violent_word_list/Physical_violence.xlsx")
+            case "Psychological_violence" :
+                WordList = pd.read_excel(self.CLEAN_DATA_PATH+"/violent_word_list/Psychological_violence.xlsx")
+            case _:
+                raise TypeError("This keyword is not associated with any specific word list.")
+                WordList = pd.DataFrame()
+        
+        return WordList.transpose().values.tolist()[0]
