@@ -34,9 +34,16 @@ class WordCounter:
         
         dataframe["total_count"] = self.dataframe["Plot"].str.split().str.len()
 
+        print("total count")
+        cols = dataframe.columns.difference(["total_count"])
+        print("calculate density")
+        density = ["density " + s for s in cols]
+        dataframe[density] = dataframe[cols].div(dataframe["total_count"], axis=0) 
+        print("done !")
         return dataframe
 
     def count_word(self, keyword):
+        print("word count for the list :",keyword)
         dataframe = pd.DataFrame(index=self.dataframe.index)
         violent_list = self.data_loader.Violent_word_list(keyword)
         # Reshape the list
