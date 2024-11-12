@@ -5,66 +5,44 @@ This script implement a word counter. You choose the list and the model count fo
 List parameter :
 "Physical_violence"
 "Psychological_violence"
+"All"
 """
 
-# Use a pipeline as a high-level helper
-from transformers import pipeline
-import torch
-from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
-from torch.nn.functional import softmax
 import numpy as np
+import pandas as pd
 
-pipe = pipeline("text-classification", model="bhadresh-savani/distilbert-base-uncased-emotion")
 
-class ViolenceDetector:
-    def __init__(self):
-        # Initialize tokenizer and model
-        self.tokenizer = DistilBertTokenizer.from_pretrained("bhadresh-savani/distilbert-base-uncased-emotion")
-        self.model = DistilBertForSequenceClassification.from_pretrained("bhadresh-savani/distilbert-base-uncased-emotion")
+class WordCounter:
+    def __init__(self,DataLoader,Dataframe):
         
-        self.space = self.tokenizer(" ")
+        #initialise keywords
+        self.keywords = ["Physical_violence","Psychological_violence"]
+        self.data_loader = DataLoader
+        self.dataframe = Dataframe
 
-    
-    def preprocess_text(self, text):
-        # Tokenize the text
-        inputs = self.tokenizer(
-            text,
-            truncation=False,
-            padding=True,
-            return_tensors="pt"
-        )
-
-        # Max tokens per chunk
-        max_length = 512
-        total_length = inputs['input_ids'].size(1)
-
-        # Split the input into chunks of max_length tokens
-        input_ids = inputs['input_ids'][0] 
-        attention_mask = inputs['attention_mask'][0]
-
-
-        # Create chunks
-        input_id_chunks = [input_ids[i:i + max_length] for i in range(0, len(input_ids), max_length)]
-        attention_mask_chunks = [attention_mask[i:i + max_length] for i in range(0, len(attention_mask), max_length)]
+    def violent_word_count(self, keyword):
+        #handle all keywords
+        if keyword == "All" :
+            dataframe = pd.DataFrame()
+            for word_list in self.keywords :
+                dataframe = pd.merge(dataframe, self.count_word(word_list), left_index=True, right_index=True, how='outer')
+        elif keyword in self.keywords :
+            dataframe = self.count_word(keyword)
+        else :
+            #handle case of a wrong call !
+            raise Exception("Sorry, this keyword is not in the list. Reminder of the list : " + ' ,'.join(self.keywords))
         
+        dataframe["total_count"] = self.dataframe["Plot"].str.split().str.len()
 
-        # Convert chunks back to tensors with correct batch dimension
-        chunked_inputs = [{'input_ids': ids.unsqueeze(0), 'attention_mask': mask.unsqueeze(0)} 
-                  for ids, mask in zip(input_id_chunks, attention_mask_chunks)]
+        return dataframe
 
-        return chunked_inputs,total_length
-    
-    def analyze_violence(self, plot_text):
-        inputs,total_length = self.preprocess_text(plot_text)
+    def count_word(self, keyword):
+        dataframe = pd.DataFrame(index=self.dataframe.index)
+        violent_list = self.data_loader.Violent_word_list(keyword)
+        # Reshape the list
+        pattern = r'\b(?:' + '|'.join(violent_list) + r')\b'
+        # Calculate the appearances
+        dataframe["word_count_"+keyword] = self.dataframe["Plot"].str.findall(pattern).str.len()
+        return dataframe
 
-        prediction_score = torch.zeros(6)
-
-        with torch.no_grad():
-            for part in inputs :
-                outputs = self.model(**part)
-                predictions = softmax(outputs.logits, dim=1)
-                prediction_score += predictions[0] * (part['input_ids'].size(1) / total_length)
-
-            
-        return prediction_score.numpy()
 
