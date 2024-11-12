@@ -31,7 +31,7 @@ class WordCounter:
         else :
             #handle case of a wrong call !
             raise Exception("Sorry, this keyword is not in the list. Reminder of the list : " + ' ,'.join(self.keywords))
-        
+
         dataframe["total_count"] = self.dataframe["Plot"].str.split().str.len()
 
         print("total count")
@@ -40,11 +40,12 @@ class WordCounter:
         density = ["density " + s for s in cols]
         dataframe[density] = dataframe[cols].div(dataframe["total_count"], axis=0) 
         print("done !")
+
         return dataframe
 
     def count_word(self, keyword):
         print("word count for the list :",keyword)
-        dataframe = pd.DataFrame(index=self.dataframe.index)
+        dataframe = pd.DataFrame()
         violent_list = self.data_loader.Violent_word_list(keyword)
         # Reshape the list
         pattern = r'\b(?:' + '|'.join(violent_list) + r')\b'
