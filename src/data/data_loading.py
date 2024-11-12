@@ -25,14 +25,6 @@ class DataLoader:
             if file not in (".DS_Store", ".ipynb_checkpoints"):
                 print(file)
 
-    def clean_movie_data(self):
-        
-        MovieData = pd.read_csv(self.CLEAN_DATA_PATH+"/Movie_Data_clean.tsv",
-                                sep='\t',
-                               index_col=["Wikipedia movie ID"])
-        
-        return MovieData
-
     def movie_data(self):
         print("\nload CMU movie metadata\n")
         # load movies data
@@ -81,6 +73,19 @@ class DataLoader:
 
         return KaggleData
 
-    
+    #load all raw data
     def load_all_data(self):
         return self.movie_data(),self.plot_data(),self.GVD_data(),self.Kaggle_data()
+
+    def clean_movie_data(self):
+        
+        MovieData = pd.read_csv(self.CLEAN_DATA_PATH+"/Movie_Data_clean.tsv",
+                                sep='\t',
+                               index_col=["Wikipedia movie ID"])
+        return MovieData
+
+    def human_labelled_data(self):
+        
+        ViolentData = pd.read_excel(self.RAW_DATA_PATH+"/Human_labelling_violentMovie.xlsx",sheet_name='data')
+        ViolentLabel = pd.read_excel(self.RAW_DATA_PATH+"/Human_labelling_violentMovie.xlsx",sheet_name='label')
+        return ViolentLabel,ViolentData
