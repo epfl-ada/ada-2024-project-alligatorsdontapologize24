@@ -88,16 +88,20 @@ class DataLoader:
     def data_for_violent_model(self):
         
         SentimentData = pd.read_csv(self.CLEAN_DATA_PATH+"/sentiment.csv")
-        
         WordCountData = pd.read_csv(self.CLEAN_DATA_PATH+"/word_count.csv")
         Data = pd.merge(SentimentData,WordCountData, on="Wikipedia movie ID", how='outer')
         Data = Data.set_index("Wikipedia movie ID")
-        return Data
+
+        SentimentDataTest = pd.read_csv(self.CLEAN_DATA_PATH+"/sentiment_test.csv")
+        WordCountDataTest = pd.read_csv(self.CLEAN_DATA_PATH+"/word_count_test.csv")
+        DataTest = pd.merge(SentimentDataTest,WordCountDataTest, on="Wikipedia movie ID", how='outer')
+        DataTest = DataTest.set_index("Wikipedia movie ID")
+        return Data,DataTest
 
     def human_labelled_data(self):
         
         ViolentData = pd.read_excel(self.RAW_DATA_PATH+"/Human_labelling_violentMovie.xlsx",sheet_name='data')
-        ViolentData = ViolentData.set_index("Wikipedia ID")
+        ViolentData = ViolentData.set_index("Wikipedia movie ID")
         ViolentLabel = pd.read_excel(self.RAW_DATA_PATH+"/Human_labelling_violentMovie.xlsx",sheet_name='label')
         return ViolentLabel,ViolentData
 
