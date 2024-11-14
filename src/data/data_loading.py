@@ -108,12 +108,22 @@ class DataLoader:
         
         return Data,DataTest
 
-    def human_labelled_data(self):
-        
-        ViolentData = pd.read_excel(self.RAW_DATA_PATH+"/Human_labelling_violentMovie.xlsx",sheet_name='data')
-        ViolentData = ViolentData.set_index("Wikipedia movie ID")
-        ViolentLabel = pd.read_excel(self.RAW_DATA_PATH+"/Human_labelling_violentMovie.xlsx",sheet_name='label')
+    def human_labelled_data(self,state = ""):
+        match state :
+            case "Raw" :
+                ViolentData = pd.read_excel(self.RAW_DATA_PATH+"/Human_labelling_violentMovie.xlsx",sheet_name='data')
+                ViolentData = ViolentData.set_index("Wikipedia movie ID")
+                ViolentLabel = pd.read_excel(self.RAW_DATA_PATH+"/Human_labelling_violentMovie.xlsx",sheet_name='label')
+            case _: 
+                ViolentData = pd.read_excel(self.CLEAN_DATA_PATH+"/Human_labelling_violentMovie.xlsx",sheet_name='data')
+                ViolentData = ViolentData.set_index("Wikipedia movie ID")
+                ViolentLabel = pd.read_excel(self.CLEAN_DATA_PATH+"/Human_labelling_violentMovie.xlsx",sheet_name='label')
         return ViolentLabel,ViolentData
+
+    def save_back_to_excel(self, ViolentLabel, ViolentData):
+        with pd.ExcelWriter(self.CLEAN_DATA_PATH+"/Human_labelling_violentMovie.xlsx") as writer:
+            ViolentData.to_excel(writer, sheet_name='data')
+            ViolentLabel.to_excel(writer, sheet_name='label')
 
     def Violent_word_list(self,keyword):
         match keyword:
