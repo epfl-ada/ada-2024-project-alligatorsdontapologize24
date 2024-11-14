@@ -14,10 +14,27 @@ Even if very few would have believed it 20 years ago, wars and violent political
 
 The focus on the geographical area of the US is due to the fact that there is most data available, both for the movies and the real-world violence.
 The central dataset for our study is the CMU Dataset (LINK HERE). To enrich this dataset with missing dates and the audience's perception of the movies (rankings), we use The Movies Dataset from Kaggle (LINK HERE). The GVD dataset (LINK HERE) is used as the source for real-world lethal violence in the US. This dataset integrates indicators on the major causes of lethal interpersonal and communal violence — intentional and unintentional homicides, killings in legal interventions, and direct conflict deaths — and combines them in a single violent deaths indicator [^2]. Moreover, the (WHICH DATASET) (LINK HERE) serves as a resource for violent historical events. This dataset is mainly used to identify the exact temporal span of those events in order to analyze the prevalence of violent movie content in those times.  
+The first step in this analysis is to clean and filter the movie data in the CMU dataset. For this, we perform the following processing steps:
+* Removing unnecessary columns and NaN entries
+* Keep only the entries for which we have both metadata and a plot summary
+* Lowercase all plot summaries
+* Convert all entries in easily readable format (e.g. convert {"/m/09c7w0": "United States of America"} to "United States of America")
+* Filter only for US movies
 
+Moreover, we treat the Kaggle dataset in the same way. This allows us to replace incomplete or missing dates for movies in the CMU dataset with the corresponding data from the Kaggle dataset (matched by the movie title). If neither the CMU nor the Kaggle dataset provide valid information on the movie date, we drop the corresponding entry. Checking for outliers, i.e. incorrect dates, revealed no hits. The cleaned dataset is exported and saved in .tsv format.
+
+The next step is to identify the violent movies in the cleaned dataset. For this, we defined three scores: 
+* Physical violence score
+* Psychological violence score
+* Sentiment scores
+
+In all three cases, the data source is the plot summary. For the physical and psychological violence score, we identified two separate lists of words that are unambigously connected to physical and psychological violence respectively. For potential further interest in the justification for each word in those lists, we created two .txt files in the data > CLEAN > violent_word_list folder. The reason why the list of psychologically violent words is by far greater than the one for physical violence is the following: While physically violent words can often be unambigously described by nouns (e.g. "murder"), psychological violence is often referred to by verbs. Thus, we had to include various different conjugations of each verb.  
+We then parse through all plot summaries in the cleaned data and count how often those words appear. This leads to the absolute counts of physical and psychological words in the plot summaries. Since the length of the plot summaries varies significantly, we additionally compute the "density" of physical and psychological words by dividing the absolute counts by the number of words in the plot summary. 
+For the sentiment scores, we apply the DistilBERT model trained for sentiment analysis [^3]. This model also parses through all plot summaries and computes scores for the following five sentiments: sadness, joy, love, anger, fear, surprise. The higher the score, the more prevalent is the sentiment.
 
 
 
 [^1]: Jackson, Chris. *Views on Crime and Law Enforcement
 Around the World*, Ipsos, 2023.
 [^2]: Zenodo, *Global Violent Deaths (GVD) database 2004-2021, 2023 update, version 1.0*, DOI: 10.5281/zenodo.8215006, 2023
+[^3]: https://huggingface.co/bhadresh-savani/distilbert-base-uncased-emotion
