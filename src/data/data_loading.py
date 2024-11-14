@@ -85,17 +85,27 @@ class DataLoader:
                                index_col=["Wikipedia movie ID"])
         return MovieData
 
-    def data_for_violent_model(self):
-        
+    def load_sentiment(self):
         SentimentData = pd.read_csv(self.CLEAN_DATA_PATH+"/sentiment.csv")
+        SentimentDataTest = pd.read_csv(self.CLEAN_DATA_PATH+"/sentiment_test.csv")
+        return SentimentData,SentimentDataTest
+
+    def load_wordCount(self):
         WordCountData = pd.read_csv(self.CLEAN_DATA_PATH+"/word_count.csv")
+        WordCountDataTest = pd.read_csv(self.CLEAN_DATA_PATH+"/word_count_test.csv")
+        return WordCountData,WordCountDataTest
+        
+    def data_for_violent_model(self):
+
+        SentimentData,SentimentDataTest = self.load_sentiment()
+        WordCountData,WordCountDataTest = self.load_wordCount()
+        
         Data = pd.merge(SentimentData,WordCountData, on="Wikipedia movie ID", how='outer')
         Data = Data.set_index("Wikipedia movie ID")
 
-        SentimentDataTest = pd.read_csv(self.CLEAN_DATA_PATH+"/sentiment_test.csv")
-        WordCountDataTest = pd.read_csv(self.CLEAN_DATA_PATH+"/word_count_test.csv")
         DataTest = pd.merge(SentimentDataTest,WordCountDataTest, on="Wikipedia movie ID", how='outer')
         DataTest = DataTest.set_index("Wikipedia movie ID")
+        
         return Data,DataTest
 
     def human_labelled_data(self):
