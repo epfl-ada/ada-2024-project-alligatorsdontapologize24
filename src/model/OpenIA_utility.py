@@ -29,7 +29,7 @@ class GPT4mini_ViolenceClassifier:
         #prompt ingenieurring
         self.Label = """
         - **Peaceful**: The text describes no violence. There are no aggression, conflict, or harm to people or animals. Suitable for all audiences, including children and sensitive viewers.
-        - **Mild**: The level of violence of the text is minimal or uncertain. There might be moments of tension or mild conflict, such as arguments. TMild action or suspense is allowed without explicit harm.
+        - **Mild**: The level of violence of the text is minimal or uncertain. There might be moments of tension or mild conflict, such as arguments. ÒÒMild action or suspense is allowed without explicit harm.
         - **Violent**: The text describe violence, such as physical aggression, conflict, or harm. Scenes may include fighting, injury, or other intense confrontations. It a prominent feature of the film."""
         
         self.Instruction = "Assign a violence level from the scale above to each movie plot provided below."
@@ -72,7 +72,7 @@ class GPT4mini_ViolenceClassifier:
     def format_batch(self,Data):
         Text = ""
         for i in range(0,Data.shape[0]) :
-            Text += self.format_plot(i,Data.iloc[i]['Plot'])
+            Text += self.format_plot(i+1,Data.iloc[i]['Plot'])
         #last check
         size = self.count_tokens(Text)
         if size > (self.max_input-self.Prompt_size) :
@@ -85,7 +85,7 @@ class GPT4mini_ViolenceClassifier:
         batch = [0]
         currentBatch = self.Prompt_size
         for i in range(0,Data.shape[0]):
-            plot_tokens = self.count_tokens(self.format_plot(i,Data.iloc[i]["Plot"]))
+            plot_tokens = self.count_tokens(self.format_plot(i+1,Data.iloc[i]["Plot"]))
             if currentBatch + plot_tokens > self.max_input:
                 batch.append(i)
                 print("batch margin:",self.max_input-currentBatch)
