@@ -10,6 +10,7 @@ Even if very few would have believed it 20 years ago, wars and violent political
 
 * Is there a significant (positive or negative) correlation between the prevalence of violent movies and reported violent deaths in the US?
 * Can we identify an impact of violent historical events (wars, violent riots, etc.) on the prevalence of violent movies in the US?
+* Can we identify genres and periods in time that have been particularly violent?
 * ...
 
 The focus on the geographical area of the US is due to the fact that there is most data available, both for the movies and the real-world violence.
@@ -21,7 +22,7 @@ The first step in this analysis is to clean and filter the movie data in the CMU
 * Convert all entries in easily readable format (e.g. convert {"/m/09c7w0": "United States of America"} to "United States of America")
 * Filter only for US movies
 
-Moreover, we treat the Kaggle dataset in the same way. This allows us to replace incomplete or missing dates for movies in the CMU dataset with the corresponding data from the Kaggle dataset (matched by the movie title). If neither the CMU nor the Kaggle dataset provide valid information on the movie date, we drop the corresponding entry. Checking for outliers, i.e. incorrect dates, revealed no hits. The cleaned dataset is exported and saved in .tsv format.
+Moreover, we treat the Kaggle dataset in the same way. This allows us to replace incomplete or missing dates for movies in the CMU dataset with the corresponding data from the Kaggle dataset (matched by the movie title). If neither the CMU nor the Kaggle dataset provide valid information on the movie date, we drop the corresponding entry. The cleaned dataset is exported and saved in .tsv format.
 
 The next step is to identify the violent movies in the cleaned dataset. For this, we defined three scores: 
 * Physical violence score
@@ -30,7 +31,15 @@ The next step is to identify the violent movies in the cleaned dataset. For this
 
 In all three cases, the data source is the plot summary. For the physical and psychological violence score, we identified two separate lists of words that are unambigously connected to physical and psychological violence respectively. For potential further interest in the justification for each word in those lists, we created two .txt files in the data > CLEAN > violent_word_list folder. The reason why the list of psychologically violent words is by far greater than the one for physical violence is the following: While physically violent words can often be unambigously described by nouns (e.g. "murder"), psychological violence is often referred to by verbs. Thus, we had to include various different conjugations of each verb.  
 We then parse through all plot summaries in the cleaned data and count how often those words appear. This leads to the absolute counts of physical and psychological words in the plot summaries. Since the length of the plot summaries varies significantly, we additionally compute the "density" of physical and psychological words by dividing the absolute counts by the number of words in the plot summary. 
-For the sentiment scores, we apply the DistilBERT model trained for sentiment analysis [^3]. This model also parses through all plot summaries and computes scores for the following five sentiments: sadness, joy, love, anger, fear, surprise. The higher the score, the more prevalent is the sentiment.
+For the sentiment scores, we apply the DistilBERT model trained for sentiment analysis [^3]. This model also parses through all plot summaries and computes scores for the following five sentiments: sadness, joy, love, anger, fear, surprise. The higher the score, the more prevalent is the sentiment. 
+With these scores we are able to classify all movies in the cleaned dataset into three categories: 
+
+* Violent 
+* Mildly violent
+* Non-violent
+
+
+
 
 
 
