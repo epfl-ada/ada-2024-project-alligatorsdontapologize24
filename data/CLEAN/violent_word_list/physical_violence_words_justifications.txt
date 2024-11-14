@@ -1,0 +1,78 @@
+This txt file provides the justifications for the words used in the list of physical violence words that we are parsing for in the plot summaries:
+
+"assassinate" / "assassination": Specifically refers to the premeditated murder of a prominent person, usually for political reasons.
+"assault": Directly describes a physical attack on someone.
+"attack": Clearly indicates an aggressive action against someone or something.
+"behead" / "beheading": Explicitly refers to the act of cutting off someone's head, an extreme form of violence.
+"beat" / "beating": Describes the act of repeatedly striking someone, causing physical harm.
+"bludgeon": Refers to striking forcefully with a heavy, blunt object, implying severe physical harm.
+"blood" / "bloody": Often associated with physical injury or violence, indicating the presence of bodily harm.
+"bomb" / "bombing": Refers to the use of explosive devices to cause destruction and harm.
+"brutalize": Means to treat someone in a violent or savage manner.
+"bullet": A projectile fired from a gun, often used in violent acts.
+"butcher" (in the violent sense): When used as a verb, it refers to killing or injuring someone in a brutal manner.
+"choke": Describes the act of cutting off someone's air supply, often violently.
+"combat": Directly refers to fighting, especially in war.
+"corpse": Indicates a dead body, often the result of violence.
+"crush" (in the violent sense): Can refer to violently compressing or smashing something, often causing severe injury.
+"decapitate" / "decapitation": Synonymous with beheading, an extreme form of violence.
+"dismember" / "dismemberment": Refers to cutting off limbs or tearing apart a body, an act of extreme violence.
+"execute" / "execution": Refers to killing someone, especially as a legal punishment or in an organized manner.
+"explode" / "explosion" (in violent contexts): Can refer to the violent bursting or detonation of something, often causing destruction and harm.
+"fist fight": Explicitly describes a violent confrontation using bare hands.
+"gore" / "gory": Refers to violence involving bloodshed and graphic injuries.
+"gun down": Specifically refers to shooting someone, usually fatally.
+"gunshot": Indicates the discharge of a firearm, often in a violent context.
+"hack" (in the violent sense): Can refer to violently cutting or chopping, often implying repeated strikes.
+"hang" (as in execution): Refers to killing by suspension from the neck.
+"hit" (in the violent sense): Can refer to striking someone forcefully.
+"homicide": The killing of one person by another.
+"impale": To pierce with a sharp stake or point, a violent act.
+"injure" / "injury": Directly refers to physical harm or damage to a person's body.
+"kill" / "killing": Explicitly refers to the act of ending life.
+"knife" / "knifing": Refers to the use of a blade to harm someone.
+"maim": To wound or injure severely, causing permanent damage.
+"manslaughter": The crime of killing a human being without malice aforethought.
+"massacre": Refers to indiscriminate and brutal slaughter of multiple people.
+"molest" (in the violent sense): To assault or abuse someone, often with sexual implications.
+"murder": The unlawful premeditated killing of one person by another.
+"mutilate" / "mutilation": To inflict serious damage on the body of someone.
+"punch": To strike with a fist, a direct act of violence.
+"rape": Sexual assault or abuse, a violent crime.
+"ravage" (in the violent sense): To cause severe damage or destruction.
+"rip" (in the violent sense): Can refer to violently tearing flesh or body parts.
+"savage" (verb, in the violent sense): To attack ferociously.
+"sever": To cut through completely, often referring to body parts.
+"shoot" / "shooting": To fire a gun, often with the intent to harm.
+"slash": To cut with a sweeping stroke, often violently.
+"slay" / "slaying": To kill violently.
+"slaughter": The killing of a large number of people or animals in a cruel or violent way.
+"slit" (as in "slit throat"): To cut a long, narrow opening, often referring to a violent act against a person.
+"smash" (in the violent sense): To break violently into pieces, can refer to injuring someone.
+"stab" / "stabbing": To pierce or wound with a pointed weapon, typically a knife.
+"strangle" / "strangulation": To kill by squeezing the throat.
+"suffocate" / "suffocation": To kill by preventing breathing, often a violent act.
+"throttle": To choke or strangle someone.
+"torture": The act of inflicting severe pain as punishment or coercion.
+"trample" (in the violent sense): To tread on and crush, can refer to violently attacking someone.
+"wound": An injury to the body, typically caused by violence.
+"artillery": Large-caliber guns used in warfare for long-range indirect fire. This word directly relates to weapons capable of causing significant destruction and casualties12.
+"bombardment": An attack by artillery fire or bombing. This term explicitly describes a sustained assault using explosive projectiles5.
+"shelling": The use of explosive projectiles fired from artillery pieces. Like bombardment, this word specifically refers to violent attacks using explosive munitions5.
+"ambush": A surprise attack from a concealed position. This term directly implies a violent confrontation5.
+"grenade": A small explosive device thrown by hand or launched mechanically. Grenades are explicitly designed as weapons to cause harm5.
+"mortar": A portable short-range weapon that fires explosive projectiles at high-arcing trajectories. This is a specific type of artillery used in combat1.
+"bayonet": A blade attached to the muzzle of a rifle for use in close combat. This term directly refers to a weapon designed for stabbing or slashing in hand-to-hand fighting5.
+"napalm": A highly flammable sticky jelly used in incendiary bombs and flamethrowers. This substance is specifically designed to cause severe burns and destruction5.
+"landmine": An explosive device concealed underground to destroy vehicles or personnel. Landmines are explicitly designed to maim or kill5.
+"shrapnel": Fragments from an exploded artillery shell, bomb, or landmine. This term directly relates to the damaging debris created by explosive weapons
+"box" / "boxing": While "box" can have non-violent meanings, in this context it likely refers to the sport of boxing, which involves two people fighting with their fists, potentially causing physical harm.
+"enemy": While not inherently violent, this term is often used in contexts of conflict and can imply a target for violent actions.
+"fist": A clenched hand, often associated with punching or striking in a violent manner.
+"gun": A weapon designed to discharge projectiles at high velocity, typically used to inflict harm or damage.
+"hang": While already explained in the execution context, it can also refer to death by suspension from the neck in non-judicial settings.
+"hit": Already explained in the violent sense, but it's worth noting that it can refer to any forceful impact against a person or object.
+"punch": While explained as a verb, as a noun it refers to the act of striking with a fist.
+"ravage": In addition to the violent sense explained, it can also mean to devastate or destroy, often implying widespread damage.
+"savage" (adjective): When used as an adjective, it can describe something fierce, violent, or uncontrolled.
+"shoot": In addition to firing a gun, it can also refer to the act of launching or propelling any projectile with the intent to harm.

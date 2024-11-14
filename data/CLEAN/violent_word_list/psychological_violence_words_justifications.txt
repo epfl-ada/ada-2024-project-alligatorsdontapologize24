@@ -1,0 +1,25 @@
+This txt file provides the justifications for the words used in the list of psychological violence words that we are parsing for in the plot summaries: 
+
+As explained in the readme file, we included various different conjugations of all verbs listed below.
+
+Forms of verbal abuse: name-calling, yelling, shouting, threats, constant criticism
+Gaslighting: denying reality, minimizing feelings, projecting blame, withholding information
+Manipulation: playing mind games, guilt-tripping, love-bombing, silent treatment
+Stonewalling: ignoring, shutting down, avoidance
+Other forms: isolation, financial abuse, coercive control, damage to property, stalking, body shaming, sleep deprivation, overprotection
+Emotional manipulation: abandonment, betrayal, blackmail, embarrassment, fear-mongering, humiliation
+Psychological destabilization: agitation, chaos, confusion, disillusionment, unpredictability
+Self-esteem attacks: belittling, condescension, demeaning, downgrading, invalidation
+Control tactics: domination, entitlement, exploitation, possessiveness, ultimatums
+Distortion of reality: brainwashing, delusion, fabrication, hallucination, illusion
+Emotional neglect: dismissal, disregard, indifference, rejection, withholding affection
+Instilling negative emotions: anguish, anxiety, depression, despair, hopelessness
+Boundary violations: intrusion, invasion of privacy, obsession, smothering
+Character assassination: defamation, discrediting, mockery, ridicule, slander
+Psychological projection: attributing one's own unacceptable thoughts or emotions to others
+Emotional volatility: mood swings, outbursts, rage, unpredictability
+Victim mentality: self-pity, playing the victim, refusing to take responsibility
+Psychological trauma: PTSD, flashbacks, triggers, emotional numbness
+Psychological dependency: codependency, emotional addiction, unhealthy attachment
+Psychological fragmentation: dissociation, depersonalization, identity confusion
+Additional Concepts: triangulation (creating drama or conflict between two parties), normalizing (desensitizing the victim to abusive behaviors), hoovering (attempting to "suck" the victim back into the relationship), word salad (using confusing or contradictory language to disorient the victim), walking on eggshells (feeling the need to be overly cautious to avoid setting off the abuser)
