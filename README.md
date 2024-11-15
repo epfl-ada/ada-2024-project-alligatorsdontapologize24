@@ -79,7 +79,7 @@ The proposed further timeline for our project is the following:
 
 ![Timeline](data/Timeline.png)
 
-The list of tasks until P3 mentioned in the picture below are equally shared within the team to ensure that every team member contributes to the project.
+The list of tasks until P3 mentioned in the picture above are equally shared within the team to ensure that every team member contributes to the project.
 
 
 [^1]: http://www.cs.cmu.edu/~ark/personas/
