@@ -8,7 +8,7 @@
  Cruel fist fights, brutal killings, rough sexual assaults - movies sometimes show more explicit violence than we would like. But do they lead to an increase in real-world violence? Or, on the contrary, do they serve as a release that reduces it? This study analyzes 17077 movies from the CMU Dataset [^1], enriched with data from the Kaggle Movies Dataset [^2]. Using this data in combination with the NIBRS dataset [^3] and the GVD dataset [^6], we examine the correlation between depicted violence in movies and real-world violence in the US. To purge the analysis from potential other factors that influence the real world violence, we will use an auto-regressive distributed lag model with time fixed effects. This will allow us to draw valid conclusions from the correlation analysis in order to answer our research questions.
 
 ## Main part
-Even if very few wou ld have believed it 20 years ago, wars and violent political conflicts are once again present. Moreover, everyday violence seems to be on the rise worldwide, as a study on the perception of violence in one's own neighborhood states [^4]. This underlines the importance of violence as the overall subject of this study. Within our analyses we aim to provide answers on the following research questions: 
+Even if very few would have believed it 20 years ago, wars and violent political conflicts are once again present. Moreover, everyday violence seems to be on the rise worldwide, as a study on the perception of violence in one's own neighborhood states [^4]. This underlines the importance of violence as the overall subject of this study. Within our analyses we aim to provide answers on the following research questions: 
 
 * Is there a significant (positive or negative) correlation between the prevalence of violent movies and reported violent crimes in the US?
 * Can we identify periods of abnormally many releases of violent movies? 
@@ -17,7 +17,7 @@ Even if very few wou ld have believed it 20 years ago, wars and violent politica
 The focus on the geographical area of the US is due to the fact that there is most data available, both for the movies and the real-world violence.
 
 ### Movie Datasets
-The central dataset for our study is the CMU Dataset [^1]. To enrich this dataset with missing dates and the audience's perception of the movies (rankings), we use The Movies Dataset from Kaggle [^2]. 
+The central dataset for our study is the CMU Dataset [^1]. Since time will play a crucial role in our study and precise release dates are often unavailable, we will fill in missing dates dates using The Movies Dataset from Kaggle [^2]. 
 The first step is to clean and filter the movie data as follows:
 * Removing unnecessary columns and NaN entries
 * Keep only the entries for which we have both metadata and a plot summary
@@ -25,7 +25,7 @@ The first step is to clean and filter the movie data as follows:
 * Convert all entries in easily readable format (e.g. convert {"/m/09c7w0": "United States of America"} to "United States of America")
 * Filter only for US movies
 
-Incomplete or missing dates for movies in the CMU dataset are replaced with corresponding data from the Kaggle dataset (matched by the movie title). If neither the CMU nor the Kaggle dataset provide valid information on the movie date, we drop the corresponding entry. The cleaned dataset is exported and saved in .tsv format.
+Incomplete or missing dates for movies in the CMU dataset are replaced with corresponding data from the Kaggle dataset (matched based on movie titles and date comparisons). If neither the CMU nor the Kaggle dataset provide valid information on the movie date, we drop the corresponding entry. The cleaned dataset is exported and saved in .tsv format.
 
 ### Movie Classification
 
