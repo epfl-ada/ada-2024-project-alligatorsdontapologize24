@@ -47,8 +47,11 @@ With those two processed datasets at hand we can now perform the correlation ana
 * Time-fixed effects allow to "absorb" higher-level influencing factors (like wars, riots, etc.).
 * The autoregressive lag allows to account for the effect that times of higher level of violence usually do not end immediately.
 
+The proposed further timeline for our project is the following: 
+
 ![Timeline](data/Timeline.png)
 
+The list of tasks until P3 mentioned in the picture below are equally shared within the team to ensure that every team member contributes to the project.
 
 
 [^1]: Jackson, Chris. *Views on Crime and Law Enforcement
