@@ -67,13 +67,13 @@ The *offense_type_id* feature in NIBRS determines whether a crime qualifies as v
 
 ### Correlation Analysis
 
-A simple linear regression of violent movies on violent crimes would overlook confounding factors. To address this, we implement an auto-regressive distributed lag model with time-fixed effects, offering the following advantages:
+A simple linear regression of violent movies on violent crimes would overlook confounding factors. To address this, we will implement an auto-regressive distributed lag model with time-fixed effects, offering the following advantages:
 
 * Fine temporal resolution: Analyzing daily or monthly data captures immediate effects of violent movie releases.
 * Time-fixed effects: Absorbs macro-level influences like wars or riots.
 * Auto-regressive lag: Accounts for the persistence of violence over time.
   
-This approach allows us to isolate the specific impact of violent movies on real-world crime.
+This approach will allow us to isolate the specific impact of violent movies on real-world crime.
 
 The proposed further timeline for our project is the following: 
 
