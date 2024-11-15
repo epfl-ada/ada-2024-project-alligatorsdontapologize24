@@ -20,7 +20,7 @@ def load_csv(file_path, usecols=None):
     if os.path.exists(file_path):
         df = pd.read_csv(file_path)
         if usecols:
-            usecols = [col.lower() for col in usecols]  # Ensure usecols are lowercase which should be the case
+            usecols = [col.lower() for col in usecols]  # Ensure usecols are lowercase
             # Select only the columns that exist in the DataFrame
             usecols = [col for col in usecols if col in df.columns]
             df = df[usecols]
@@ -34,7 +34,7 @@ def process_state_data(base_dir, output_file):
     Parameters:
     ----------
     base_dir : str
-        The path to the base directory containing year-based folders for the state (e.g., 'AL-1991', 'AL-1992').
+        The path to the base directory containing year-based folders (e.g., 'XX-1991', 'YY-1992').
     output_file : str
         The path where the final merged CSV file will be saved.
     
@@ -45,11 +45,11 @@ def process_state_data(base_dir, output_file):
     """
     all_data = []  # Initialize a list to collect data from each year
 
-    # Loop through each year folder (e.g., AL-1991, AL-1992, ...)
+    # Loop through each folder in the base directory
     for folder in os.listdir(base_dir):
-        # Check if the folder name starts with "AL-" and extract the year
-        if folder.startswith("AL-"):
-            year = folder.split("-")[1]
+        # Check if the folder name matches the "XX-YYYY" pattern
+        if len(folder) > 2 and folder[2] == '-':
+            year = folder.split("-")[1]  # Extract the year
             folder_path = os.path.join(base_dir, folder)
 
             # Define file paths in lowercase
@@ -93,10 +93,13 @@ def process_state_data(base_dir, output_file):
             all_data.append(merged_data)
 
     # Concatenate all yearly data into a single DataFrame
-    final_data = pd.concat(all_data, ignore_index=True)
+    if all_data:
+        final_data = pd.concat(all_data, ignore_index=True)
 
-    # Save the final merged dataset to a CSV file if needed
-    final_data.to_csv(output_file, index=False)
-    print(f"Data processed and saved to {output_file}")
+        # Save the final merged dataset to a CSV file
+        final_data.to_csv(output_file, index=False)
+        print(f"Data processed and saved to {output_file}")
+    else:
+        print("No data was processed. Check the input directory.")
 
-    return final_data
+    return final_data if all_data else pd.DataFrame()

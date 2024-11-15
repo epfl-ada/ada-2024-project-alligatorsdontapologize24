@@ -5,13 +5,13 @@ def preprocess_files_in_directory(base_dir, verbose=True):
     """
     Preprocess files in a specified directory by renaming each file to lowercase
     and standardizing all column names in CSV files to lowercase. This function
-    is useful for normalizing file and column formats to simplify data processing.
+    is useful for normalizing file and column formats to simplify data processing (e.g., merging).
 
     Parameters:
     ----------
     base_dir : str
-        The path to the base directory containing year-based folders (e.g., 'AL-1991', 'AL-1992').
-        Each folder is expected to contain CSV files with potentially inconsistent naming conventions.
+        The path to the base directory containing year-based folders (e.g., 'XX-1991', 'YY-1992').
+        Each folder is expected to contain CSV files with potentially inconsistent naming conventions (UPPERCASE).
     
     Returns:
     -------
@@ -21,15 +21,15 @@ def preprocess_files_in_directory(base_dir, verbose=True):
 
     Example:
     -------
-    preprocess_files_in_directory('../../data/RAW/Alabama')
+    preprocess_files_in_directory('../../data/RAW/SomeState')
     """
     # Iterate through each folder in the base directory
-    # Each folder corresponds to a specific year, such as 'AL-1991'
     for folder in os.listdir(base_dir):
         folder_path = os.path.join(base_dir, folder)
         
-        # Check if the current item is a directory and starts with "AL-"
-        if os.path.isdir(folder_path) and folder.startswith("AL-"):
+        # Check if the current item is a directory and matches the 'XX-' pattern
+        # (modified from the Alabama example to match any state folder)
+        if os.path.isdir(folder_path) and len(folder) > 2 and folder[2] == '-':
             # Process each file within the folder
             for filename in os.listdir(folder_path):
                 # Define the full path of the original file
