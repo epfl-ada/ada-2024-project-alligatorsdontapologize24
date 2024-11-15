@@ -38,8 +38,16 @@ With these scores we are able to classify all movies in the cleaned dataset into
 * Mildly violent
 * Non-violent
 
+The classification is done in two ways: first, we train a multiclass logistic regression model on a train set that we labelled by hand using the crowdsourcing approach, i.e. by activating our own social network. Secondly, we use the pre-trained model of mini-GPT (??) and let it label the movies. The labelled dataset is then the final version of the movie data to be used for the correlation analysis in this study. 
 
+* TO BE DONE: How do we process the violence dataset ?
 
+With those two processed datasets at hand we can now perform the correlation analysis. Simply running a linear regression model of the number of violent movies on the number of reported violent crimes is not sufficiend: there are various other factors that influence the real-world violence that we would not account for in this model. Thus, we would not be able to draw valid conclusions from the regression coefficients. Instead, we will implement an auto-regressive distributed lag model with time fixed effects. Also, we want to make the temporal resolution as fine as possible. With this, we can tackle the various other unknown influences in the following way: 
+* The daily (or monthly) temporal resolution allows to observe immediate effects of significantly many releases of violent movies.
+* Time-fixed effects allow to "absorb" higher-level influencing factors (like wars, riots, etc.).
+* The autoregressive lag allows to account for the effect that times of higher level of violence usually do not end immediately.
+
+![Timeline](data/Timeline.png)
 
 
 
