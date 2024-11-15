@@ -20,6 +20,7 @@ def filter_violent_offenses(data, offense_type_data, verbose=True):
         A filtered DataFrame containing only violent offenses.
     """
     # Define criteria for violent offenses
+    # needs to be modified to be more precise
     violent_categories = [
         "Assault Offenses", "Homicide Offenses", "Sex Offenses", "Kidnapping/Abduction", "Animal Cruelty"
     ]

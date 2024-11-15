@@ -103,3 +103,47 @@ def process_state_data(base_dir, output_file):
         print("No data was processed. Check the input directory.")
 
     return final_data if all_data else pd.DataFrame()
+
+def merge_offense_types(base_dir, state_prefix, offense_file_name="nibrs_offense_type.csv", verbose=True):
+    """
+    Combine offense type data across years into a single DataFrame.
+
+    Parameters:
+    ----------
+    base_dir : str
+        Path to the base directory containing year-based folders.
+    state_prefix : str
+        Prefix used to identify state folders (e.g., "WA" for Washington).
+    offense_file_name : str, optional
+        Name of the CSV file containing offense type data. Default is "nibrs_offense_type.csv".
+    verbose : bool, optional
+        If True, prints additional information. Default is True.
+
+    Returns:
+    -------
+    pd.DataFrame
+        A combined DataFrame containing all offense type data.
+    """
+    all_offense_data = []
+
+    for folder in os.listdir(base_dir):
+        if folder.startswith(f"{state_prefix}-"):
+            folder_path = os.path.join(base_dir, folder)
+            offense_file_path = os.path.join(folder_path, offense_file_name)
+
+            if os.path.exists(offense_file_path):
+                offense_data = pd.read_csv(offense_file_path)
+                all_offense_data.append(offense_data)
+
+                if verbose:
+                    print(f"Loaded offense type data from: {offense_file_path}")
+
+    if not all_offense_data:
+        raise ValueError("No offense type data found in the specified directory.")
+
+    combined_offense_data = pd.concat(all_offense_data, ignore_index=True)
+
+    if verbose:
+        print(f"Combined offense type data contains {len(combined_offense_data)} rows.")
+
+    return combined_offense_data
