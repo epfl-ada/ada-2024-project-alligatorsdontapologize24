@@ -17,15 +17,15 @@ Even if very few wou ld have believed it 20 years ago, wars and violent politica
 The focus on the geographical area of the US is due to the fact that there is most data available, both for the movies and the real-world violence.
 
 ### Movie Datasets
-The central dataset for our study is the CMU Dataset [^1]. To enrich this dataset with missing dates and the audience's perception of the movies (rankings), we use The Movies Dataset from Kaggle [^2]. The NIBRS dataset [^3] is used as the source for real-world violent crimes in the US. This dataset aggregates the NIBRS data for all available states in the US from 1991 to 2018.  
-The first step in this analysis is to clean and filter the movie data in the CMU dataset. For this, we perform the following processing steps:
+The central dataset for our study is the CMU Dataset [^1]. To enrich this dataset with missing dates and the audience's perception of the movies (rankings), we use The Movies Dataset from Kaggle [^2]. 
+The first step is to clean and filter the movie data as follows:
 * Removing unnecessary columns and NaN entries
 * Keep only the entries for which we have both metadata and a plot summary
 * Lowercase all plot summaries
 * Convert all entries in easily readable format (e.g. convert {"/m/09c7w0": "United States of America"} to "United States of America")
 * Filter only for US movies
 
-Moreover, we treat the Kaggle dataset in the same way. This allows us to replace incomplete or missing dates for movies in the CMU dataset with the corresponding data from the Kaggle dataset (matched by the movie title). If neither the CMU nor the Kaggle dataset provide valid information on the movie date, we drop the corresponding entry. The cleaned dataset is exported and saved in .tsv format.
+Incomplete or missing dates for movies in the CMU dataset are replaced with corresponding data from the Kaggle dataset (matched by the movie title). If neither the CMU nor the Kaggle dataset provide valid information on the movie date, we drop the corresponding entry. The cleaned dataset is exported and saved in .tsv format.
 
 ### Movie Classification
 
@@ -47,10 +47,10 @@ Here, we first compute three different scores based on the plot summaries:
 * Psychological violence score
 * Sentiment scores
 
-For the physical and psychological violence score, we identified two separate lists of words that are unambigously connected to physical and psychological violence respectively. For potential further interest in the justification for each word in those lists, we created two .txt files in the data > CLEAN > violent_word_list folder.   
-We parse through all plot summaries in the cleaned data and count how often those words appear. This leads to the absolute counts of physical and psychological words in the plot summaries. Since the length of the plot summaries varies significantly, we additionally compute the "density" of physical and psychological words by dividing the absolute counts by the number of words in the plot summary. 
+For the physical and psychological violence score, we identified two separate lists of words that are unambigously connected to physical and psychological violence respectively. For potential further interest in the justification for those words, we created two .txt files in the data > CLEAN > violent_word_list folder.   
+We parse through all plot summaries in the cleaned data and count how often those words appear. Since the length of the plot summaries varies significantly, we additionally compute the "density" of physical and psychological words by dividing the absolute counts by the number of words in the plot summary. 
 For the sentiment scores, we apply the DistilBERT model trained for sentiment analysis [^5]. This model also parses through all plot summaries and computes scores for the following five sentiments: sadness, joy, love, anger, fear, surprise. The higher the score, the more prevalent is the sentiment. 
-Those three scores are the features for the model. It is trained on a set of movies that we labelled by hand using the crowdsourcing approach, i.e. by activating our own social network. This, however, led to unsatisfying results, since our features do not seem to sufficiently capture the complex notion of violence. 
+Those three scores are the features for the model. It is trained on a set of movies that we labelled by hand using the crowdsourcing approach, i.e. by activating our own social network. Model 1, however, showed unsatisfying results, since our features do not seem to sufficiently capture the complex notion of violence. 
 
 #### Model 2: 
 Here, we use a pre-trained LLM (mini-GPT4) with custom prompts, our three different violence classes and a set of instructions. The assessment of the model performance is done on the same human-labelled movies as before. Due to the subjectivity of the human labelling process, model performance evaluation is yet not trivial. 
@@ -58,14 +58,22 @@ Generally, the performance of Model 2 is significantly better than Model 1. Thus
 
 ### Violence Datasets
 
-The difference between the GVD [^6] and the NIBRS dataset [^3] is mostly the granularity of the data: While the GDV aggregates violent deaths over years, the NIBRS allows for analysis on a daily basis. We use the GVD dataset for identifying general violent tendencies and the NIBRS for the actual correlation analysis described below. In NIBRS, the feature *offense_type_id* is used to identify if we count the corresponding crime as violent or not. 
+For real-world violence, we rely on two datasets:
+
+* GVD [^6]: Aggregates violent deaths annually.
+* NIBRS [^3]: Offers daily-level crime data.
+
+The *offense_type_id* feature in NIBRS determines whether a crime qualifies as violent. While GVD helps track broad trends, NIBRS supports granular temporal analysis.
 
 ### Correlation Analysis
 
-With those processed datasets at hand we can now perform the correlation analysis. Simply running a linear regression model of the number of violent movies on the number of reported violent crimes is not sufficiend: there are various other factors that influence the real-world violence that we would not account for in this model. Thus, we would not be able to draw valid conclusions from the regression coefficients. Instead, we will implement an auto-regressive distributed lag model with time fixed effects. Also, we want to make the temporal resolution as fine as possible. With this, we can tackle the various other unknown influences in the following way: 
-* The daily (or monthly) temporal resolution allows to observe immediate effects of significantly many releases of violent movies.
-* Time-fixed effects allow to "absorb" higher-level influencing factors (like wars, riots, etc.).
-* The autoregressive lag allows to account for the effect that times of higher level of violence usually do not end immediately.
+A simple linear regression of violent movies on violent crimes would overlook confounding factors. To address this, we implement an auto-regressive distributed lag model with time-fixed effects, offering the following advantages:
+
+* Fine temporal resolution: Analyzing daily or monthly data captures immediate effects of violent movie releases.
+* Time-fixed effects: Absorbs macro-level influences like wars or riots.
+* Auto-regressive lag: Accounts for the persistence of violence over time.
+  
+This approach allows us to isolate the specific impact of violent movies on real-world crime.
 
 The proposed further timeline for our project is the following: 
 
