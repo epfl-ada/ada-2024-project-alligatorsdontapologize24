@@ -1,6 +1,8 @@
 This txt file provides the justifications for the words used in the list of psychological violence words that we are parsing for in the plot summaries: 
 
-As explained in the readme file, we included various different conjugations of all verbs listed below.
+The reason why the list of psychologically violent words is by far greater than the one for physical violence is the following: 
+While physically violent words can often be unambigously described by nouns (e.g. "murder"), psychological violence is often referred to by verbs. 
+Thus, we had to include various different conjugations of each verb.
 
 Forms of verbal abuse: name-calling, yelling, shouting, threats, constant criticism
 Gaslighting: denying reality, minimizing feelings, projecting blame, withholding information
