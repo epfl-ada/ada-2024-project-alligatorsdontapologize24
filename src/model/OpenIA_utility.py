@@ -22,8 +22,8 @@ class GPT4mini_ViolenceClassifier:
         self.client = OpenAI()
 
         #model parameters
-        #self.max_input = 128000 #maximum imput tokens for the model
-        self.max_input = 8000 #maximum imput tokens for the model
+        self.max_input = 128000 #maximum imput tokens for the model
+        #self.max_input = 8000 #maximum imput tokens for the model
         self.pricing = 1/1000000*0.150 #price per token
         self.encoder = tiktoken.encoding_for_model("gpt-4o-mini") #for gpt-4o-mini
         
@@ -37,7 +37,6 @@ class GPT4mini_ViolenceClassifier:
         self.Example = """Here are some examples for each label :
         - **Peaceful**: plot1 :'norma and malcolm miochaels are a middle-aged married couple who are in the midst of a midlife crisis. both decide to separate and begin their lives anew away from each other. however, problems ensue once they discover that they are no longer as young as they used to be.'
         plot2:'in the 1840s, two sisters fall in love with the same man. while drunk, the man writes a letter proposing marriage to the wrong one.'
-        plot3:'it is the final weekend of summer and a group of californian teenagers are looking forward to an upcoming surf contest. rival gangs the 'vals' and the 'lowks' are confident that they will take home the trophy, but things become complicated when reef yorpin  - leader of the lawks - discovers his sister allie  has fallen in love with 'val' surfer nick  after meeting at a beach party.'
         - **Mild**: plot1:'set in the 19th century, the plot centered around a man  who is falsely accused murder. the other side of the door was shot in monterrey, mexico.{{cite web}}'
         plot2:'in a desperate, but not-too-courageous, attempt to end his life, a man hires a murderer to do the job for him. soon, though, things are looking better and the he must now avoid the hit.'
         - **Violent**: plot1:'Richard Beck  is a police detective who believed that rape victims are to blame for the crime. He is later raped by two of the suspects he had been chasing. Ultimately, he changes his beliefs about rape victims. This made for TV movie was groundbreaking in that it portrayed the rape of a man by two other men, and because of this it has become a cult classic.'
@@ -86,6 +85,7 @@ class GPT4mini_ViolenceClassifier:
         #last check
         size = self.count_tokens(Text)
         if size > (self.max_input-self.Prompt_size) :
+            print("size : {}, max size {}".format(size + self.Prompt_size,self.max_input))
             raise Exception("ho ho.. this is too big")
         
         return Text
