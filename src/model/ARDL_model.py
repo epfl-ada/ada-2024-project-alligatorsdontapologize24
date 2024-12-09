@@ -38,7 +38,7 @@ def ARDL_model_func(box_revenues_violent: pd.DataFrame, violence:pd.DataFrame = 
     weekly_films_revenues = pd.merge(weekly_no_films, weekly_revenues, on=["Year", "Week"], how="left")
 
     # Sort by year and week (from old to young)
-    weekly_films_revenues_sorted = weekly_films_revenues.sort_values(["Year", "Week"], ascending=False)
+    weekly_films_revenues_sorted = weekly_films_revenues.sort_values(["Year", "Week"], ascending=True)
 
 
     # ---------------------------------- Preprocess the unemployment data -------------------------------------- #
