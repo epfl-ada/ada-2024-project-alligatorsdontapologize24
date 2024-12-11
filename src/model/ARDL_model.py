@@ -5,6 +5,7 @@ from scipy import stats
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
 from statsmodels.regression.linear_model import RegressionResultsWrapper
+from statsmodels.tsa.ardl import ardl_select_order
 
 #from statsmodels.tsa.ardl import select_order
 
@@ -58,7 +59,11 @@ def ARDL_model_func(box_revenues_violent: pd.DataFrame, violence:pd.DataFrame = 
     #EXOG = pd.concat([weekly_revenues, weekly_unemployment], axis=1)
 
 
-    """ # ----------------------- Model definition for auto-regressive distributed lag model ----------------- #
+    """ # --------------------------------------------------- TEST ------------------------------------------------- #
+    EXOG = weekly_films_revenues_sorted
+
+
+    # ----------------------- Model definition for auto-regressive distributed lag model ----------------- #
 
     # Setting the time frame for the auto-regressive part
     max_auto_lag = 4            # take into account max. 4 previous timesteps
@@ -68,12 +73,10 @@ def ARDL_model_func(box_revenues_violent: pd.DataFrame, violence:pd.DataFrame = 
     max_unemployment_lag = 1    # take into account max 1 previous timestep
 
     # Include time-fixed effects
-    time_fixed = True
+    #time_fixed = True
 
     # Include additional confounding factors
-    include_confounding = True
-
-    # INCLUDE TIME DUMMY VARIABLES FOR TIME FIXED EFFECTS?
+    #include_confounding = True
 
     # Get indicator variables for the year-week
     EXOG["Year-Week"] = EXOG["Year"] + "-" + EXOG["Week"]
@@ -85,10 +88,11 @@ def ARDL_model_func(box_revenues_violent: pd.DataFrame, violence:pd.DataFrame = 
     # --------------------------------------- Set up select_order --------------------------------------- #
 
     # Automatically select lag order based on AIC
-    selected_order = select_order(violence['violence_score'], EXOG_with_dummies, maxlag=max_auto_lag, maxorder={'box_office_revenue':max_film_lag,'unemployment_rate':max_unemployment_lag}, ic='aic')
+    selected_order = ardl_select_order(violence['violence_score'], EXOG_with_dummies, maxlag=max_auto_lag, maxorder={'box_office_revenue':max_film_lag,'unemployment_rate':max_unemployment_lag}, ic='aic')
 
     # Fit ARDL model with the selected order
     model = selected_order.model """
     
+
 
     return weekly_films_revenues_sorted
