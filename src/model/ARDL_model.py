@@ -1,24 +1,17 @@
-import numpy as np
 import pandas as pd
-from statsmodels.stats import diagnostic
-from scipy import stats
-import statsmodels.api as sm
-import statsmodels.formula.api as smf
 from statsmodels.regression.linear_model import RegressionResultsWrapper
 from statsmodels.tsa.ardl import ardl_select_order
+from statsmodels.tsa.ardl import ARDL
 
-#from statsmodels.tsa.ardl import select_order
 
-# RegressionResultsWrapper
-
-def ARDL_model_func(box_revenues_violent: pd.DataFrame, violence:pd.DataFrame = None,  unemployment_rate: pd.DataFrame = None) -> pd.DataFrame:
+def ARDL_model_func(box_revenues_violent: pd.DataFrame, real_violence:pd.DataFrame,  time_fixed_effects=False) -> RegressionResultsWrapper:
 
     """
     Creates and returns a statsmodels ARDL model.
     
     Parameters:
     - dependent: pandas Series of real-world violence score
-    - independent: pandas DataFrame of box office revenues of films classified as violent, pandas DataFrame of unemploymnet rate
+    - independent: pandas DataFrame of box office revenues of films classified as violent
     
     Returns:
     - A statsmodels OLS RegressionResultsWrapper object
@@ -50,49 +43,106 @@ def ARDL_model_func(box_revenues_violent: pd.DataFrame, violence:pd.DataFrame = 
 
     # ------------------------------------- Preprocess the violence data --------------------------------------- #
 
-    # To Do
-    # PREPROCESSING OF VIOLENCE DATAFRAME? -> MUST ALSO BE IN WEEKLY NUMBERS IN THE SAME TIMESPAN
+    # sum up violence counts for all states provided (grouped by year and week) to have one final violence score
+    weekly_violence_USA = real_violence.groupby(["Year", "Week"])["Violence_score"].sum().reset_index()
 
-    # ---------------------------------------------------------------------------------------------------------- #
-
-    # Concatenate the two exogenous variables (take only values for the time frame under analysis)
-    #EXOG = pd.concat([weekly_revenues, weekly_unemployment], axis=1)
+    # Sort by year and week (from old to young)
+    weekly_violence_USA = weekly_violence_USA.sort_values(["Year", "Week"], ascending=True)
 
 
-    """ # --------------------------------------------------- TEST ------------------------------------------------- #
-    EXOG = weekly_films_revenues_sorted
+    # -------------------------------- Match the different datasets in size ------------------------------------ #
+
+    # real_violence dataset: find starting and ending year of data
+    year_start = weekly_violence_USA["Year"].min()
+    year_stop = weekly_violence_USA["Year"].max()
+
+    # box_revenues_violent dataset: we do not have all weeks in 2012 -> find the ending week of data
+    df_temp = weekly_films_revenues_sorted[weekly_films_revenues_sorted['Year'] == 2012]
+    week_stop_2012 = df_temp['Week'].max()
+
+    # box_revenues_violent dataset: cut time span in years to match real_violence dataset
+    weekly_films_revenues_sorted_cut = weekly_films_revenues_sorted[(weekly_films_revenues_sorted["Year"] >= year_start) & (weekly_films_revenues_sorted["Year"] <= year_stop)]
+
+    # real_violence dataset: cut weekly time span in year 2012 to only contain values until week 42 of 2012 (included)
+    weekly_violence_USA_cut = weekly_violence_USA[(weekly_violence_USA["Year"] < 2012) | ((weekly_violence_USA["Year"] == 2012) & (weekly_violence_USA["Week"] <= week_stop_2012))]
 
 
-    # ----------------------- Model definition for auto-regressive distributed lag model ----------------- #
+    # --------------------------------------- Merge the two dataframes ----------------------------------------- #
+
+    merged_violence = pd.merge(weekly_violence_USA_cut, weekly_films_revenues_sorted_cut, on=['Year', 'Week'], how='left')
+    
+    # Non-existing lines in weekly_films_revenues_sorted_cut: no films published, zero box office revenue -> fill with 0
+    merged_violence["no. films released"] = merged_violence["no. films released"].fillna(0).astype(int)
+    merged_violence["Box office revenue"] = merged_violence["Box office revenue"].fillna(0).astype(int)
+
+    # Assure correct sorting in merged dataframe
+    merged_violence = merged_violence.sort_values(["Year", "Week"], ascending=True)
+
+    # --------------------------- Create biweekly time dummies for time-fixed effects -------------------------- #
+
+    # Get Year-Week identifier
+    merged_violence["Year-Week"] = merged_violence["Year"].astype(str) + "-" + merged_violence["Week"].astype(str)
+
+    # Compute biweek number (to reduce the number of regressors)
+    merged_violence["BiWeek"] = ((merged_violence["Week"] - 1) // 2) + 1
+
+    # Combine year and biweek number into Year-BiWeek identifier
+    merged_violence["Year-BiWeek"] = merged_violence["Year"].astype(str) + "-B" + merged_violence["BiWeek"].astype(str)
+
+    # Create time dummies for biweekly time-fixed effects
+    time_dummies = pd.get_dummies(merged_violence["Year-BiWeek"], drop_first=True).astype(int)
+    
+    # ------------------------ Separate data in ENDOG and EXOG (including time dummies) ------------------------ #
+
+    # endogenous (dependent variable)
+    ENDOG = merged_violence["Violence_score"]
+
+    # exogenous (indepent variables, including time-fixed effect dummies)
+    EXOG = pd.concat([merged_violence.drop(columns=["Year-Week", "BiWeek", "Year-BiWeek", "Year", "Week", "Violence_score", "no. films released"]), time_dummies], axis=1)
+
+
+    # ---------------------------------------- Optimal lag search ---------------------------------------------- #
 
     # Setting the time frame for the auto-regressive part
-    max_auto_lag = 4            # take into account max. 4 previous timesteps
+    max_auto_lag = 6            # take into account max. 6 previous timesteps (6 previous weeks)
 
     # Setting the time span for the distributed lag part
-    max_film_lag = 4            # take into account max. 4 previous timesteps
-    max_unemployment_lag = 1    # take into account max 1 previous timestep
+    max_distr_lag = 6            # take into account max. 6 previous timesteps (6 previous weeks)
 
-    # Include time-fixed effects
-    #time_fixed = True
+    # find best order for lags
+    selected_order = ardl_select_order(
+        endog=ENDOG, 
+        exog=EXOG, 
+        maxlag=max_auto_lag, 
+        maxorder={"Box office revenue": max_distr_lag}, 
+        ic='aic'
+    )
 
-    # Include additional confounding factors
-    #include_confounding = True
+    # ---------------------------------------- Create optimal ARDL model ---------------------------------------- #
 
-    # Get indicator variables for the year-week
-    EXOG["Year-Week"] = EXOG["Year"] + "-" + EXOG["Week"]
+    # create ARDL model and fit to data (include biweekly time fixed effects or not according to time_fixed_effects)
 
-    # Create time dummies for weekly time-fixed effects
-    time_dummies = pd.get_dummies(EXOG["Year-Week"], drop_first=True)
-    EXOG_with_dummies = pd.concat([EXOG, time_dummies], axis=1)
+    if time_fixed_effects == True: 
 
-    # --------------------------------------- Set up select_order --------------------------------------- #
+        ARDL_model = ARDL(
+            endog=ENDOG,
+            exog=EXOG,
+            lags=selected_order.ar_lags,
+            order=selected_order.dl_lags,
+            fixed=time_dummies,
+            trend="ct"
+        ).fit()
 
-    # Automatically select lag order based on AIC
-    selected_order = ardl_select_order(violence['violence_score'], EXOG_with_dummies, maxlag=max_auto_lag, maxorder={'box_office_revenue':max_film_lag,'unemployment_rate':max_unemployment_lag}, ic='aic')
+    else: 
 
-    # Fit ARDL model with the selected order
-    model = selected_order.model """
+        ARDL_model = ARDL(
+            endog=ENDOG,
+            exog=EXOG,
+            lags=selected_order.ar_lags,
+            order=selected_order.dl_lags,
+            trend="ct"
+        ).fit()
     
 
 
-    return weekly_films_revenues_sorted
+    return ARDL_model
