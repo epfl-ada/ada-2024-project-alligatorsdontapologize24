@@ -2,13 +2,14 @@ import pandas as pd
 from statsmodels.regression.linear_model import RegressionResultsWrapper
 from statsmodels.tsa.ardl import ardl_select_order
 from statsmodels.tsa.ardl import ARDL
+import os
+import warnings
 
-
-def ARDL_model_func(box_revenues_violent: pd.DataFrame, real_violence:pd.DataFrame,  time_fixed_effects=False) -> RegressionResultsWrapper:
+def ARDL_model_func(box_revenues_violent: pd.DataFrame, real_violence:pd.DataFrame,  time_fixed_effects:bool=False) -> RegressionResultsWrapper:
 
     """
     Creates and returns a statsmodels ARDL model.
-    
+
     Parameters:
     - dependent: pandas Series of real-world violence score
     - independent: pandas DataFrame of box office revenues of films classified as violent
@@ -33,12 +34,6 @@ def ARDL_model_func(box_revenues_violent: pd.DataFrame, real_violence:pd.DataFra
 
     # Sort by year and week (from old to young)
     weekly_films_revenues_sorted = weekly_films_revenues.sort_values(["Year", "Week"], ascending=True)
-
-
-    # ---------------------------------- Preprocess the unemployment data -------------------------------------- #
-
-    # To Do
-    # PREPROCESSING OF UNEMPLOYMENT RATE DATAFRAME? -> MUST ALSO BE IN WEEKLY NUMBERS IN THE SAME TIMESPAN
 
 
     # ------------------------------------- Preprocess the violence data --------------------------------------- #
@@ -92,13 +87,14 @@ def ARDL_model_func(box_revenues_violent: pd.DataFrame, real_violence:pd.DataFra
     # Create time dummies for biweekly time-fixed effects
     time_dummies = pd.get_dummies(merged_violence["Year-BiWeek"], drop_first=True).astype(int)
     
-    # ------------------------ Separate data in ENDOG and EXOG (including time dummies) ------------------------ #
+    # ------------------------ Separate data in ENDOG and EXOG (excluding time dummies) ------------------------ #
 
     # endogenous (dependent variable)
     ENDOG = merged_violence["Violence_score"]
 
-    # exogenous (indepent variables, including time-fixed effect dummies)
-    EXOG = pd.concat([merged_violence.drop(columns=["Year-Week", "BiWeek", "Year-BiWeek", "Year", "Week", "Violence_score", "no. films released"]), time_dummies], axis=1)
+    # exogenous (independent variables, not including time-fixed effect dummies)
+    #EXOG = merged_violence.drop(columns=["Year-Week", "BiWeek", "Year-BiWeek", "Year", "Week", "Violence_score", "no. films released"])
+    EXOG = merged_violence.drop(columns=["Year-Week", "BiWeek", "Year-BiWeek", "Year", "Week", "Violence_score"])
 
 
     # ---------------------------------------- Optimal lag search ---------------------------------------------- #
@@ -114,7 +110,7 @@ def ARDL_model_func(box_revenues_violent: pd.DataFrame, real_violence:pd.DataFra
         endog=ENDOG, 
         exog=EXOG, 
         maxlag=max_auto_lag, 
-        maxorder={"Box office revenue": max_distr_lag}, 
+        maxorder=max_distr_lag, 
         ic='aic'
     )
 
@@ -122,27 +118,88 @@ def ARDL_model_func(box_revenues_violent: pd.DataFrame, real_violence:pd.DataFra
 
     # create ARDL model and fit to data (include biweekly time fixed effects or not according to time_fixed_effects)
 
-    if time_fixed_effects == True: 
+    with warnings.catch_warnings():
 
-        ARDL_model = ARDL(
-            endog=ENDOG,
-            exog=EXOG,
-            lags=selected_order.ar_lags,
-            order=selected_order.dl_lags,
-            fixed=time_dummies,
-            trend="ct"
-        ).fit()
+        warnings.filterwarnings("ignore")
 
-    else: 
+        if time_fixed_effects == True: 
 
-        ARDL_model = ARDL(
-            endog=ENDOG,
-            exog=EXOG,
-            lags=selected_order.ar_lags,
-            order=selected_order.dl_lags,
-            trend="ct"
-        ).fit()
+            ARDL_model = ARDL(
+                endog=ENDOG,
+                exog=EXOG,
+                lags=selected_order.ar_lags,
+                order=selected_order.dl_lags,
+                fixed=time_dummies,
+                trend="c"
+            ).fit()
+
+        else: 
+
+            ARDL_model = ARDL(
+                endog=ENDOG,
+                exog=EXOG,
+                lags=selected_order.ar_lags,
+                order=selected_order.dl_lags,
+                trend="c",
+            ).fit()
     
 
 
     return ARDL_model
+
+
+
+
+
+
+def ARDL_states_separate(directory_path:str, box_revenues_violent: pd.DataFrame, consecutive_years_per_state: pd.DataFrame, ARDL_model_func, time_fixed_effects:bool = False) -> dict : 
+    """
+    Iterates through the directory where we store the CSV files with state-specific violence scores over years,
+    loads every file into a dataframe and fits the optimal ARDL model for this state.
+
+    Args:
+        directory_path: path to the directory where the CSV files are stored
+        box_revenues_violent: box office revenues of all violent films in the US from CMU and Kaggle dataset
+        consecutive_years_per_state: dataframe containing a timespan for each state where we consecutively have data
+        ARDL_model_func: function for optimal ARDL model fitting (see above)
+        time_fixed_effects: include time-fixed effects in the models or not
+
+    Returns:
+        fitted_ARDL_models: a dictionary of fitted ARDL models, the key is composed of ARDL_"state_name"
+    """
+
+    fitted_ARDL_models = {}
+    
+    # Iterate through directory
+    for filename in os.listdir(directory_path):
+
+        # Check for .csv extension
+        if filename.endswith(".csv"):
+            file_path = os.path.join(directory_path, filename)
+            
+            # Extract state name (everything before first "_")
+            state_name = filename.split("_")[0]
+            dict_key = f"ARDL_{state_name}"
+
+            # Load into dataframe
+            real_violence_per_state = pd.read_csv(file_path, sep=",")
+
+            # Search for correct state info on the consecutive years
+            state_info = consecutive_years_per_state[consecutive_years_per_state["state"] == state_name]
+            
+            if not state_info.empty:
+                # Get consecutive years time span for the current state
+                min_year = state_info["minimum_year"].values[0]
+                max_year = state_info["maximum_year"].values[0]
+                
+                # Filter the dataframe for those values
+                real_violence_per_state = real_violence_per_state[(real_violence_per_state["Year"] >= min_year) & (real_violence_per_state["Year"] <= max_year)]
+            
+            # Fit optimal ARDL model
+            fitted_ARDL_current = ARDL_model_func(box_revenues_violent, real_violence_per_state, time_fixed_effects)
+            
+            # Store ARDL model in the dictionary
+            fitted_ARDL_models[dict_key] = fitted_ARDL_current
+
+    return fitted_ARDL_models
+
