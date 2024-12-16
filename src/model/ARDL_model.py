@@ -402,7 +402,7 @@ def violence_score_z_score_aggregated(data,year,start_week,stop_week, window_siz
     return result_df
 
 
-def z_score_all_states_merged(directory_path:str, year: int, start_week: int, stop_week: int, window_size: int = 6, 
+def z_score_all_states_merged(directory_path:str, start_year: int, end_year: int, start_week: int, stop_week: int, window_size: int = 6, 
                               offenses: list = ['Assault Offenses', 'Robbery', 'Sex Offenses', 'Kidnapping/Abduction', 'Arson', 'Homicide Offenses']) -> dict : 
     
     """
@@ -417,6 +417,8 @@ def z_score_all_states_merged(directory_path:str, year: int, start_week: int, st
     # Iterate through directory
     for filename in os.listdir(directory_path):
 
+        state_z_list_years = []
+
         # Check for .csv extension
         if filename.endswith(".csv"):
             file_path = os.path.join(directory_path, filename)
@@ -428,18 +430,30 @@ def z_score_all_states_merged(directory_path:str, year: int, start_week: int, st
             # Load into dataframe
             real_violence_per_state = pd.read_csv(file_path, sep=",")
 
-            # z-score for this state
-            df_z = violence_score_z_score_aggregated(real_violence_per_state, year, start_week, stop_week)
+            with warnings.catch_warnings():
 
-            # store in dict
-            z_scores_per_state[dict_key] = df_z
+                warnings.filterwarnings("ignore")
+
+                for year in range(start_year, end_year+1):
+
+                    # z-score for this state for this year
+                    df_z = violence_score_z_score_aggregated(real_violence_per_state, year, start_week, stop_week)
+
+                    state_z_list_years.append(df_z)
+
+                # store in dict
+                z_scores_per_state[dict_key] = pd.concat(state_z_list_years, axis=0, ignore_index=True)
 
 
-    # Step 1: Concatenate all DataFrames
+    # Concatenate all dataframes for all states
     z_scores_concat = pd.concat(z_scores_per_state.values(), ignore_index=True)
 
-    # Step 2: Group by "Year" and "Week", and sum the z_score_aggregated values
-    z_scores_merged = z_scores_concat.groupby(["Year", "Week"], as_index=False).agg({"z_score_aggregated": "sum"})
+    # Group by "Year" and "Week", sum up the z-scores
+    z_scores_merged = z_scores_concat.groupby(["year", "week"], as_index=False).agg({"z_score_aggregated": "sum"})
 
+    # Renaming the columns for consistency
+    z_scores_merged.columns.values[0] = "Year"
+    z_scores_merged.columns.values[1] = "Week"
+    z_scores_merged.columns.values[2] = "Violence_score"
 
     return z_scores_merged
