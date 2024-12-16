@@ -212,7 +212,6 @@ def ARDL_states_separate(directory_path:str, box_revenues_violent: pd.DataFrame,
 
 
 
-
 def ARDL_model_func_jade(box_revenues_violent: pd.DataFrame, real_violence:pd.DataFrame,  time_fixed_effects:bool=False) -> RegressionResultsWrapper:
 
     """
@@ -354,4 +353,93 @@ def ARDL_model_func_jade(box_revenues_violent: pd.DataFrame, real_violence:pd.Da
     
 
 
-    return ARDL_model, EXOG
+    return ARDL_model
+
+
+
+def categorisation_violence (data,year,start_week,stop_week, window_size=6, offenses = ['Assault Offenses', 'Larceny/Theft Offenses', 'Robbery',
+       'Sex Offenses', 'Kidnapping/Abduction', 'Arson',
+       'Homicide Offenses']):
+       extracted_data = data[(data.year==year) & (data.week >=start_week) & (data.week <=stop_week)]
+       category_size = extracted_data.groupby(["year", "week", "offense_category_name"]).size()
+       result_df = category_size.reset_index(name='count_of_offenses')
+       return result_df
+
+
+
+def normalise_violent_category(extracted_data, offense,window_size=6):
+    if offense in extracted_data['offense_category_name'].values:
+        extracted_category = extracted_data[extracted_data.offense_category_name == offense].copy()
+        rolling_mean = extracted_category.count_of_offenses.rolling(window=window_size, min_periods=1).mean()
+        rolling_std = extracted_category.count_of_offenses.rolling(window=window_size, min_periods=1).std().fillna(1) # avoid division by 0 and enable to have 0 as z-score since z-score not applicable in that case
+        extracted_category.loc[:, 'z_score'] = (extracted_category.count_of_offenses - rolling_mean ) / rolling_std
+    else: 
+        extracted_category = pd.DataFrame()
+    return extracted_category
+
+
+
+def real_life_violence_score_z_score(data,year,start_week,stop_week, window_size=6, offenses = ['Assault Offenses', 'Robbery',
+       'Sex Offenses', 'Kidnapping/Abduction', 'Arson',
+       'Homicide Offenses']):
+    extracted_data =categorisation_violence(data,year,start_week,stop_week,window_size)
+    data_with_z_score = pd.DataFrame(columns=["year", "week", "offense_category_name", "count_of_offenses", "z_score"])
+    for offense in offenses: 
+      z_score_category = normalise_violent_category(extracted_data, offense,window_size)
+      if not z_score_category.empty : # check if the category is not empty
+        data_with_z_score =pd.concat([data_with_z_score,z_score_category],axis=0)
+     
+
+    return data_with_z_score
+
+
+def violence_score_z_score_aggregated(data,year,start_week,stop_week, window_size=6, offenses = ['Assault Offenses', 'Robbery',
+       'Sex Offenses', 'Kidnapping/Abduction', 'Arson',
+       'Homicide Offenses']):
+    z_score_per_category = real_life_violence_score_z_score(data,year,start_week,stop_week, window_size, offenses)
+    z_score_aggregated = z_score_per_category.groupby(["year", "week"]).z_score.sum()
+    result_df = z_score_aggregated.reset_index(name='z_score_aggregated')
+    return result_df
+
+
+def z_score_all_states_merged(directory_path:str, year: int, start_week: int, stop_week: int, window_size: int = 6, 
+                              offenses: list = ['Assault Offenses', 'Robbery', 'Sex Offenses', 'Kidnapping/Abduction', 'Arson', 'Homicide Offenses']) -> dict : 
+    
+    """
+    
+    -> needs to work for start_year to end_year -> make a loop in it.
+    Then concatenate in line direction to have all years in one dataframe.
+
+    """
+
+    z_scores_per_state = {}
+    
+    # Iterate through directory
+    for filename in os.listdir(directory_path):
+
+        # Check for .csv extension
+        if filename.endswith(".csv"):
+            file_path = os.path.join(directory_path, filename)
+            
+            # Extract state name (everything before first "_")
+            state_name = filename.split("_")[0]
+            dict_key = f"ARDL_{state_name}"
+
+            # Load into dataframe
+            real_violence_per_state = pd.read_csv(file_path, sep=",")
+
+            # z-score for this state
+            df_z = violence_score_z_score_aggregated(real_violence_per_state, year, start_week, stop_week)
+
+            # store in dict
+            z_scores_per_state[dict_key] = df_z
+
+
+    # Step 1: Concatenate all DataFrames
+    z_scores_concat = pd.concat(z_scores_per_state.values(), ignore_index=True)
+
+    # Step 2: Group by "Year" and "Week", and sum the z_score_aggregated values
+    z_scores_merged = z_scores_concat.groupby(["Year", "Week"], as_index=False).agg({"z_score_aggregated": "sum"})
+
+
+    return z_scores_merged
