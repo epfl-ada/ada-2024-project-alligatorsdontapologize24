@@ -220,19 +220,19 @@ def merge_offense_type_from_all_states(base_dir, output_file):
 
 def process_state_data_with_prefix(base_dir, output_file):
     """
-    Process data for each state folder to extract specific columns and add state prefix.
+    Process data for each state folder to take specific columns and add state prefix.
 
     Parameters:
     ----------
     base_dir : str
-        The path to the base directory containing year-based folders (e.g., 'XX-1991').
+        The path to the base directory containing year-based folders (ex: 'XX-1991').
     output_file : str
         The path where the final dataset will be saved.
 
     Returns:
     -------
     pd.DataFrame
-        A DataFrame containing the processed data from all years for one state.
+        A DataFrame that has the processed data from all years for one state.
     """
     all_data = []  # Initialize a list to collect data from each year
 
