@@ -1,16 +1,19 @@
- # P2: AlligatorsDontApologize24 
+ # P3: AlligatorsDontApologize24 
 
  ## Project title: 
  ### The feedback loop of violence: How violent movies shape real-world violence
+
+ ### Link to our data story: https://jadetherras.github.io/ADAlligators_website/ 
  
 
  ## Abstract:
- Cruel fist fights, brutal killings, rough sexual assaults - movies sometimes show more explicit violence than we would like. But do they lead to an increase in real-world violence? Or, on the contrary, do they serve as a release that reduces it? This study analyzes 17077 movies from the CMU Dataset [^1], enriched with data from the Kaggle Movies Dataset [^2]. Using this data in combination with the NIBRS dataset [^3] and the GVD dataset [^6], we examine the correlation between depicted violence in movies and real-world violence in the US. To purge the analysis from potential other factors that influence the real world violence, we will use an auto-regressive distributed lag model with time fixed effects. This will allow us to draw valid conclusions from the correlation analysis in order to answer our research questions.
+ Cruel fist fights, brutal killings, rough sexual assaults - movies sometimes show more explicit violence than we would like. But do they lead to an increase in real-world violence? Or, on the contrary, do they serve as a release that reduces it? This study analyzes 17077 movies from the CMU Dataset [^1], enriched with data from the Kaggle Movies Dataset [^2]. Using this data in combination with the NIBRS dataset [^3], we examine the correlation between depicted violence in movies and real-world violence in the US. To purge the analysis from potential other factors that influence the real world violence, we use an auto-regressive distributed lag (ARDL) model with time-fixed effects. Moreover, we introduce different approaches of data normalisation before applying it on the model. The study shows that based on the data used, there is no significant correlation between the prevalence of violent movies and real-world violence.
 
 ## Main part
 Even if very few would have believed it 20 years ago, wars and violent political conflicts are once again present. Moreover, everyday violence seems to be on the rise worldwide, as a study on the perception of violence in one's own neighborhood states [^4]. This underlines the importance of violence as the overall subject of this study. Within our analyses we aim to provide answers on the following research questions: 
 
 * Is there a significant (positive or negative) correlation between the prevalence of violent movies and reported violent crimes in the US?
+* Can we identify particularly violent time periods in the US? 
 * Can we identify periods of abnormally many releases of violent movies? 
 * Can we identify genres that are particularly violent?
 
@@ -18,22 +21,15 @@ The focus on the geographical area of the US is due to the fact that there is mo
 
 ### Movie Datasets
 The central dataset for our study is the CMU Dataset [^1]. Since time will play a crucial role in our study and precise release dates are often unavailable, we will fill in missing dates dates using The Movies Dataset from Kaggle [^2]. 
-The first step is to clean and filter the movie data as follows:
-* Removing unnecessary columns and NaN entries
-* Keep only the entries for which we have both metadata and a plot summary
-* Lowercase all plot summaries
-* Convert all entries in easily readable format (e.g. convert {"/m/09c7w0": "United States of America"} to "United States of America")
-* Filter only for US movies
+The first step is to clean and filter the movie data as explained in the "Datasets" section on our website.
 
-Incomplete or missing dates for movies in the CMU dataset are replaced with corresponding data from the Kaggle dataset (matched based on movie titles and date comparisons). If neither the CMU nor the Kaggle dataset provide valid information on the movie date, we drop the corresponding entry. The cleaned dataset is exported and saved in .tsv format.
+### Movie Classification - 3 Classes
 
-### Movie Classification
-
-The next step is to identify the violent movies in the cleaned dataset. We want to distinguish between the following three classes: 
+The next step is to identify the violent movies in the cleaned dataset. First, we want to distinguish between the following three classes: 
 
 * Violent 
-* Mildly violent
-* Non-violent
+* Mild
+* Peaceful
 
 To achieve this, we implemented two different models:
 
@@ -53,39 +49,58 @@ For the sentiment scores, we apply the DistilBERT model trained for sentiment an
 Those three scores are the features for the model. It is trained on a set of movies that we labelled by hand using the crowdsourcing approach, i.e. by activating our own social network. Model 1, however, showed unsatisfying results, since our features do not seem to sufficiently capture the complex notion of violence. 
 
 #### Model 2: 
-Here, we use a pre-trained LLM (mini-GPT4) with custom prompts, our three different violence classes and a set of instructions. The assessment of the model performance is done on the same human-labelled movies as before. Due to the subjectivity of the human labelling process, model performance evaluation is yet not trivial. 
-Generally, the performance of Model 2 is significantly better than Model 1. Thus, the cleaned dataset labelled by Model 2 will be used for the correlation analysis.  
+Here, we use a pre-trained LLM (GPT-4o mini from OpenIA [^6]) with custom prompts, our three different violence classes and a set of instructions. The assessment of the model performance is done on the same human-labelled movies as before. Due to the subjectivity of the human labelling process, model performance evaluation is yet not trivial. 
+Generally, the performance of Model 2 is significantly better than Model 1. This can be seen on the main page of our website. Thus, we chose Model 2 for the further analysis.
+
+### Movie Classification - 2 Classes
+By further studying the classification results of Model 2, we realized that the the middle class "Mild" was predicted very frequently and especially for all those cases that were slightly ambiguous between "Violent" and "Peaceful". As also stated on our website, the classification in those categories seems to be immensely subjective. Allowing for a "fallback" class in between "Violent" and "Peaceful" seems thus to unintentionally smooth out our classification results. Therefore, we decided to reduce the number of classes to 2: "Violent" and "Peaceful". 
+
+This is also a more convenient classification for the subsequent usage in the ARDL model, as we will explain later.
 
 ### Violence Datasets
 
-For real-world violence, we rely on two datasets:
+For real-world violence, we rely on the following dataset:
 
-* GVD [^6]: Aggregates violent deaths annually.
-* NIBRS [^3]: Offers daily-level crime data.
+* NIBRS [^3]: Offers daily-level crime data for all states in the US.
 
-The *offense_type_id* feature in NIBRS determines whether a crime qualifies as violent. While GVD helps track broad trends, NIBRS supports granular temporal analysis.
+The *offense_type_id* feature in NIBRS determines whether a crime qualifies as violent. With the exact date given for each recorded criminal offense, it provides the necessary time resolution for our ARDL model. 
 
 ### Correlation Analysis
 
-A simple linear regression of violent movies on violent crimes would overlook confounding factors. To address this, we will implement an auto-regressive distributed lag model with time-fixed effects, offering the following advantages:
+A simple linear regression of violent movies on violent crimes would overlook confounding factors. To address this, we will implement an auto-regressive distributed lag (ARDL )model with time-fixed effects, offering the following advantages:
 
-* Fine temporal resolution: Analyzing daily or monthly data captures immediate effects of violent movie releases.
+* Fine temporal resolution: Analyzing weekly data captures immediate effects of violent movie releases.
 * Time-fixed effects: Absorbs macro-level influences like wars or riots.
 * Auto-regressive lag: Accounts for the persistence of violence over time.
+* Distributed lag: Accounts for the fact that the influence of movies on society is generally longer than one week.
   
-This approach will allow us to isolate the specific impact of violent movies on real-world crime.
+This approach allows us to isolate the specific impact of violent movies on real-world criminal offenses.
 
-The proposed further timeline for our project is the following: 
+We use the *select_order* function from the Statsmodels module to find the optimal lags for the auto-regressive and the distributed part to be included in the model. In the "Models & Methods" section on our website, we explain the model setup, the data normalisation approaches and the results in detail. 
 
-![Timeline](data/Timeline.png)
+### Conclusion
+The central research question of this study was to find out if there is a correlation between the prevalence of violent movies on real-world violence. Using the ARDL model and the datasets described above, we could not find a statistically significant correlation between the two. Based on these findings, we assume that there is no correlation between violent movies and real-world violence. The exact results of the different ARDL models are provided in the "Models & Methods" section on our website. 
 
-The list of tasks until P3 mentioned in the picture above are equally shared within the team to ensure that every team member contributes to the project.
+However, we must state that ARDL models are very demanding on the underlying data, i.e. they need a substantial amount of data to produce reliable results [^7]. With the limited amount of input data to our model, we must therefore be very cautious when interpreting the results. 
 
+The plots on the main page of our website allow to clearly identify times of high and low violence levels as well as periods of high and low release numbers of violent movies.
+
+Additionally, we could identify violent movie genres, like "Thriller", "Horror" and "Action" as opposed to more peaceful movie genres like "Comedy", "Romance" and "Family Film". This finding is naturally in line with our expectations and underlines the reliability of our classification mechanism. 
+
+### Share of Work within the Team
+
+The work of this project has been equally shared between the team members in the following way: 
+
+* Jade: implementation of both classifier models (logistic regression and LLM), web design for website, writing the data story
+* Emma: data exploration and cleaning for movie datasets, identifying violent and peaceful genres, computation of the psychological violence score for Model 1
+* Jennifer: creating most of the graphs, violence score computation for ARDL model, identifying times of high and low violence levels
+* Lucie: exploring, extracting and cleaning the real-world violence data, violence score computation for ARDL model, creating plots for real-world violence
+* Raphael: setup, implementation and testing of the ARDL model, computation of the physical violence score for Model 1, writing the readme
 
 [^1]: http://www.cs.cmu.edu/~ark/personas/
 [^2]: https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset
 [^3]: https://www.dolthub.com/repositories/Liquidata/fbi-nibrs/data/main
 [^4]: Jackson, Chris. *Views on Crime and Law Enforcement Around the World*, Ipsos, 2023.
 [^5]: https://huggingface.co/bhadresh-savani/distilbert-base-uncased-emotion
-[^6]: https://zenodo.org/records/8215006
-
+[^6]: https://platform.openai.com/docs/models#gpt-4o-mini
+[^7]: Ponziani, R. M. (2023). Inflation forecasting using autoregressive distributed lag (ARDL) models. Jurnal Ekonomi & Studi Pembangunan, 24(2), 316-330
