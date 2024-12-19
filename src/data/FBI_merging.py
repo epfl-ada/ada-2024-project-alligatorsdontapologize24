@@ -217,3 +217,77 @@ def merge_offense_type_from_all_states(base_dir, output_file):
         print("No offense type data was found.")
 
     return merged_offense_types if all_offense_types else pd.DataFrame()
+
+def process_state_data_with_prefix(base_dir, output_file):
+    """
+    Process data for each state folder to extract specific columns and add state prefix.
+
+    Parameters:
+    ----------
+    base_dir : str
+        The path to the base directory containing year-based folders (e.g., 'XX-1991').
+    output_file : str
+        The path where the final dataset will be saved.
+
+    Returns:
+    -------
+    pd.DataFrame
+        A DataFrame containing the processed data from all years for one state.
+    """
+    all_data = []  # Initialize a list to collect data from each year
+
+    # Loop through each folder in the base directory
+    for folder in os.listdir(base_dir):
+        # Check if the folder name matches the "XX-YYYY" pattern
+        if len(folder) > 2 and folder[2] == '-':
+            state_prefix = folder.split('-')[0]  # Extract the state prefix
+            year = folder.split('-')[1]  # Extract the year
+            folder_path = os.path.join(base_dir, folder)
+
+            # Define file paths
+            incident_file = os.path.join(folder_path, 'nibrs_incident.csv')
+            offense_file = os.path.join(folder_path, 'nibrs_offense.csv')
+            offense_type_file = os.path.join(folder_path, 'nibrs_offense_type.csv')
+
+            # Load and process each CSV file
+            incidents = load_csv(incident_file, usecols=['incident_id', 'incident_date'])
+            if incidents.empty:
+                continue  # Skip this year if the essential file is missing
+
+            offenses = load_csv(offense_file)
+            offense_types = load_csv(offense_type_file, usecols=['offense_type_id', 'offense_category_name'])
+
+            # Determine which column to use for merging offenses with offense types
+            if not offenses.empty and not offense_types.empty:
+                if 'offense_type_id' in offenses.columns and 'offense_type_id' in offense_types.columns:
+                    offenses = offenses.merge(offense_types[['offense_type_id', 'offense_category_name']], on='offense_type_id', how='left')
+                elif 'offense_code' in offenses.columns and 'offense_code' in offense_types.columns:
+                    offenses = offenses.merge(offense_types[['offense_code', 'offense_category_name']], on='offense_code', how='left')
+                else:
+                    offenses = pd.DataFrame()  # Skip if neither column is available
+            else:
+                offenses = pd.DataFrame()  # Skip if either file is missing
+
+            # Merge incidents with offenses
+            if not offenses.empty:
+                merged_data = incidents.merge(offenses[['incident_id', 'offense_category_name']], on='incident_id', how='left')
+                merged_data['state_prefix'] = state_prefix  # Add the state prefix column
+                all_data.append(merged_data)
+
+    # Concatenate all yearly data into a single DataFrame
+    if all_data:
+        final_data = pd.concat(all_data, ignore_index=True)
+
+        # Select the desired columns
+        final_data = final_data[['incident_date', 'offense_category_name', 'state_prefix']].rename(
+            columns={'offense_category_name': 'offense_type'}
+        )
+
+        # Save the final dataset
+        final_data.to_csv(output_file, index=False)
+        print(f"Processed data saved to {output_file}")
+    else:
+        print("No data was processed. Check the input directory.")
+        return pd.DataFrame()
+
+    return final_data
