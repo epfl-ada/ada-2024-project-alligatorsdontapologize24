@@ -457,3 +457,53 @@ def z_score_all_states_merged(directory_path:str, start_year: int, end_year: int
     z_scores_merged.columns.values[2] = "Violence_score"
 
     return z_scores_merged
+
+
+def extract_model_results(model: ARDL, model_name: str, file_path: str) -> pd.DataFrame:
+    """
+    Extracts the coefficients, standard errors, p-values, and confidence intervals from a statsmodels ARDL model.
+    Excludes variables whose names start with a number.
+
+    Args:
+    - model (ARDL): The fitted ARDL model.
+    - model_name (str): The name of the model for saving the file.
+    - file_path (str): The path where the result will be saved.
+
+    Returns:
+    - pd.DataFrame: A DataFrame containing the variables, coefficients, standard errors, p-values, and confidence intervals.
+    """
+
+    # Extract the model summary data
+    summary_data = model.summary().tables[1].data 
+    columns = summary_data[0]
+    rows = summary_data[1:]
+    
+    # Convert summary data into a pandas DataFrame
+    raw_results = pd.DataFrame(rows, columns=columns)
+    raw_results = raw_results.rename(columns={raw_results.columns[0]: "Variable"})
+    
+    # Exclude rows where the "Variable" starts with a number
+    raw_results = raw_results[~raw_results["Variable"].str.match(r'^\d')]
+    
+    # Extract only the relevant columns for the analysis
+    results = raw_results[["Variable", "coef", "std err", "P>|z|"]].copy()
+    results.columns = ["variable", "coefficient", "std_err", "p_value"]
+
+    # Convert numerical columns to proper numeric types for further analysis
+    results[["coefficient", "std_err", "p_value"]] = results[["coefficient", "std_err", "p_value"]].apply(pd.to_numeric, errors="coerce")
+
+    # Calculate 95% confidence intervals
+    results["lower_ci"] = results["coefficient"] - 1.96 * results["std_err"]
+    results["upper_ci"] = results["coefficient"] + 1.96 * results["std_err"]
+
+    # Define path to save HTML file
+    save_path = file_path + model_name.replace(' ', '_') + ".html"
+
+    # Save the dataframe as an HTML table
+    html_table = results.to_html(classes='table table-striped table-bordered', index=False)
+
+    # Write the HTML table to the file
+    with open(save_path, 'w') as file:
+        file.write(html_table)
+
+    return results
