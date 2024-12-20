@@ -4,6 +4,7 @@
  ### The feedback loop of violence: How violent movies shape real-world violence
 
  ### Link to our data story: https://jadetherras.github.io/ADAlligators_website/ 
+ **Note:** do not use Safari to access the website: it won't work!
  ### Link to our dataset drive: https://epflch-my.sharepoint.com/:f:/r/personal/raphael_hellmann_epfl_ch/Documents/MA_3/ADA/PROJECT_DATA?csf=1&web=1&e=t72tTL
  
 
