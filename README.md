@@ -92,8 +92,8 @@ Additionally, we could identify violent movie genres, like "Thriller", "Horror" 
 The work of this project has been equally shared between the team members in the following way: 
 
 * Jade: implementation of both classifier models (logistic regression and LLM), web design for website, writing the data story
-* Emma: data exploration and cleaning for movie datasets, identifying violent and peaceful genres, computation of the psychological violence score for Model 1
-* Jennifer: creating most of the graphs, violence score computation for ARDL model, identifying times of high and low violence levels
+* Emma: data exploration and cleaning for movie datasets, validation of LLM classification with Empath, computation of the psychological violence score for Model 1, writing the data story
+* Jennifer: creating most of the graphs, violence score computation for ARDL model, identifying times of high and low violence levels and violent/peaceful genres
 * Lucie: exploring, extracting and cleaning the real-world violence data, violence score computation for ARDL model, creating plots for real-world violence
 * Raphael: setup, implementation and testing of the ARDL model, computation of the physical violence score for Model 1, writing the readme
 
