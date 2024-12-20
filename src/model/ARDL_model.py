@@ -12,18 +12,20 @@ def ARDL_model_func(
     box_revenues_violent: pd.DataFrame,
     real_violence: pd.DataFrame,
     time_fixed_effects: bool = False,
-) -> Tuple[RegressionResultsWrapper, pd.DataFrame]:
+) -> RegressionResultsWrapper:
+    
     """
-    Creates and returns a statsmodels ARDL model.
+    Creates and returns a fitted statsmodels ARDL model.
 
-    Parameters:
-    - dependent: pandas Series of real-world violence score
-    - independent: pandas DataFrame of box office revenues of films classified as violent
+    Args:
+    - box_revenues_violent: pandas DataFrame of box office revenues of films classified as violent
+    - real_violence: pandas DataFrame of real-world violence score
+    - time_fixed_effects: include time-fixed effects in the model or not
 
     Returns:
-    - A statsmodels OLS RegressionResultsWrapper object
+    - RegressionResultsWrapper: A fitted statsmodels ARDL model
     """
-
+    
     # ---------------------------------- Preprocess the box_revenues_violent data ------------------------------ #
 
     # Drop all lines containing NaN
@@ -200,14 +202,14 @@ def ARDL_states_separate(
     loads every file into a dataframe and fits the optimal ARDL model for this state.
 
     Args:
-        directory_path: path to the directory where the CSV files are stored
-        box_revenues_violent: box office revenues of all violent films in the US from CMU and Kaggle dataset
-        consecutive_years_per_state: dataframe containing a timespan for each state where we consecutively have data
-        ARDL_model_func: function for optimal ARDL model fitting (see above)
-        time_fixed_effects: include time-fixed effects in the models or not
+    - directory_path: path to the directory where the CSV files are stored
+    - box_revenues_violent: box office revenues of all violent films in the US from CMU and Kaggle dataset
+    - consecutive_years_per_state: dataframe containing a timespan for each state where we consecutively have data
+    - ARDL_model_func: function for optimal ARDL model fitting (see above)
+    - time_fixed_effects: include time-fixed effects in the models or not
 
     Returns:
-        fitted_ARDL_models: a dictionary of fitted ARDL models, the key is composed of ARDL_"state_name"
+    - dict: a dictionary of fitted ARDL models, the key is composed of ARDL_"state_name"
     """
 
     fitted_ARDL_models = {}
@@ -259,14 +261,15 @@ def ARDL_model_func_jade(
     time_fixed_effects: bool = False,
 ) -> RegressionResultsWrapper:
     """
-    Creates and returns a statsmodels ARDL model.
+    Creates and returns a statsmodels ARDL model using the normalised box office revenues.
 
-    Parameters:
-    - dependent: pandas Series of real-world violence score
-    - independent: pandas DataFrame of box office revenues of films classified as violent
+    Args:
+    - box_revenues_violent (pd.DataFrame): The input dataset containing box office revenues of violent films.
+    - real_violence (pd.DataFrame): The input dataset containing real-world violence scores.
+    - time_fixed_effects (bool): Whether to include time-fixed effects in the model.
 
     Returns:
-    - A statsmodels OLS RegressionResultsWrapper object
+    - RegressionResultsWrapper: A fitted statsmodels ARDL model.
     """
 
     # ---------------------------------- Preprocess the box_revenues_violent data ------------------------------ #
@@ -601,10 +604,22 @@ def z_score_all_states_merged(
         "Homicide Offenses",
     ],
 ) -> dict:
+    
     """
+    Iterates through the directory where we store the CSV files with state-specific violence scores (counts),
+    loads every file into a dataframe and computes the z-score for the aggregated violence score for each state.
+    
+    Args:
+    - directory_path (str): The path to the directory where the CSV files are stored.
+    - start_year (int): The starting year for the analysis.
+    - end_year (int): The ending year for the analysis.
+    - start_week (int): The starting week of the analysis period.
+    - stop_week (int): The ending week of the analysis period.
+    - window_size (int, optional): The rolling window size for calculating z-scores (set as 6 to be identical to max. AR lag).
+    - offenses (list of str, optional): A list of offense categories to consider.
 
-    -> needs to work for start_year to end_year -> make a loop in it.
-    Then concatenate in line direction to have all years in one dataframe.
+    Returns:
+    - dict: A dictionary containing the z-scores for the aggregated violence scores for all states merged.
 
     """
 
@@ -658,3 +673,114 @@ def z_score_all_states_merged(
     z_scores_merged.columns.values[2] = "Violence_score"
 
     return z_scores_merged
+
+
+
+
+def violence_score_all_states_count(directory_path: str, start_year: int, end_year: int, start_week: int, stop_week: int, 
+                                   ratio: bool = False, offenses: list = ['Assault Offenses', 'Robbery', 'Sex Offenses', 'Kidnapping/Abduction', 'Arson', 'Homicide Offenses']) -> dict:
+   
+
+    violence_scores_per_state = {}
+
+    # Iterate through directory
+    for filename in os.listdir(directory_path):
+
+        state_scores_years = []
+
+        # Check for .csv extension
+        if filename.endswith(".csv"):
+            file_path = os.path.join(directory_path, filename)
+
+            # Extract state name (everything before first "_")
+            state_name = filename.split("_")[0]
+            dict_key = f"ARDL_{state_name}"
+
+            # Load into dataframe
+            real_violence_per_state = pd.read_csv(file_path, sep=",")
+
+            with warnings.catch_warnings():
+
+                warnings.filterwarnings("ignore")
+
+                for year in range(start_year, end_year + 1):
+
+                    # Compute real-life violence score for this state and year
+                    weekly_score = real_life_violence_score_count(real_violence_per_state, year, start_week, stop_week, ratio)
+
+                    # Convert to DataFrame
+                    weekly_score_df = weekly_score.reset_index(name='violence_score')
+                    weekly_score_df['year'] = year
+                    state_scores_years.append(weekly_score_df)
+
+                # Store in dict
+                violence_scores_per_state[dict_key] = pd.concat(state_scores_years, axis=0, ignore_index=True)
+
+    # Concatenate all dataframes for all states
+    violence_scores_concat = pd.concat(violence_scores_per_state.values(), ignore_index=True)
+
+    # Group by "Year" and "Week", sum up the violence scores
+    violence_scores_merged = violence_scores_concat.groupby(["year", "week"], as_index=False).agg({"violence_score": "sum"})
+
+    # Renaming the columns for consistency
+    violence_scores_merged.columns.values[0] = "Year"
+    violence_scores_merged.columns.values[1] = "Week"
+    violence_scores_merged.columns.values[2] = "Violence_score"
+
+    return violence_scores_merged
+
+
+
+def extract_model_results(
+    model: ARDL, 
+    model_name: str, 
+    file_path: str
+    ) -> pd.DataFrame:
+
+    """
+    Extracts the coefficients, standard errors, p-values, and confidence intervals from a statsmodels ARDL model.
+    Excludes variables whose names start with a number (to avoid including the time-fixed effects in the coefficient table)
+
+    Args:
+    - model (ARDL): The fitted ARDL model.
+    - model_name (str): The name of the model for saving the file.
+    - file_path (str): The path where the result is saved.
+
+    Returns:
+    - pd.DataFrame: A DataFrame containing the variables, coefficients, standard errors, p-values, and confidence intervals.
+    """
+
+    # Extract the model summary data
+    summary_data = model.summary().tables[1].data 
+    columns = summary_data[0]
+    rows = summary_data[1:]
+    
+    # Convert summary data into a pandas DataFrame
+    raw_results = pd.DataFrame(rows, columns=columns)
+    raw_results = raw_results.rename(columns={raw_results.columns[0]: "Variable"})
+    
+    # Exclude rows where the "Variable" starts with a number (== drop all time-fixed effect coefficients, since we are not interested in them)
+    raw_results = raw_results[~raw_results["Variable"].str.match(r'^\d')]
+    
+    # Extract only the relevant columns for the analysis
+    results = raw_results[["Variable", "coef", "std err", "P>|z|"]].copy()
+    results.columns = ["variable", "coefficient", "std_err", "p_value"]
+
+    # Convert numerical columns to proper numeric types for further analysis
+    results[["coefficient", "std_err", "p_value"]] = results[["coefficient", "std_err", "p_value"]].apply(pd.to_numeric, errors="coerce")
+
+    # Calculate 95% confidence intervals
+    results["lower_ci"] = results["coefficient"] - 1.96 * results["std_err"]
+    results["upper_ci"] = results["coefficient"] + 1.96 * results["std_err"]
+
+    # Define path to save HTML file
+    save_path = file_path + model_name.replace(' ', '_') + ".html"
+
+    # Save the dataframe as an HTML table
+    html_table = results.to_html(classes='table table-striped table-bordered', index=False)
+
+    # Write the HTML table to the file
+    with open(save_path, 'w') as file:
+        file.write(html_table)
+
+    return results
