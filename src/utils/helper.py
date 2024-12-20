@@ -1,5 +1,8 @@
 import ast
 import re
+from collections import Counter
+import spacy
+
 
 
 def longest_consecutive_sequence(sorted_years):
@@ -49,3 +52,23 @@ def longest_consecutive_sequence(sorted_years):
 def extract_data(text):
     # Look for all names using a regex pattern: it matches quoted text appearing after colon
     return ", ".join(re.findall(r'": "([^"]+)"', text))
+
+# Create a function to generate a bag-of-words DataFrame
+def generate_bow(data, condition, plot_title, output_file):
+    # Filter data based on the condition (violent or non-violent)
+    filtered_data = data[data['Prediction'] == condition]
+    
+    # Perform the bag-of-words operation
+    word_counter = Counter()
+    for summary in filtered_data["Plot"]:
+        doc = nlp(summary)
+        lemmatized_words = [token.lemma_ for token in doc if not token.is_stop and not token.is_punct]
+        word_counter.update(lemmatized_words)
+
+    # Convert to DataFrame
+    bow_df = pd.DataFrame(word_counter.items(), columns=["Word", "Frequency"]).sort_values(by="Frequency", ascending=False)
+
+    # Save to CSV
+    bow_df.to_csv(output_file, index=False)
+
+    return bow_df
