@@ -675,11 +675,62 @@ def z_score_all_states_merged(
     return z_scores_merged
 
 
+def real_life_violence_score_count(
+        data: pd.DataFrame, 
+        year: int, 
+        start_week: int, 
+        stop_week: int, 
+        ratio: bool = False
+        ) -> pd.DataFrame:
+    
+    """
+    Extracts the count or ratio of real-world violence offenses from the provided dataset for a specific time period.
+
+    Args:
+    - data (pd.DataFrame): The input dataset containing real-world violence offenses.
+    - year (int): The year for which to extract the data.
+    - start_week (int): The starting week of the period for analysis.
+    - stop_week (int): The ending week of the period for analysis.
+    - ratio (bool): Whether to return the ratio of violence score to total counts.
+
+    Returns:
+    - pd.DataFrame: A DataFrame containing the extracted real-life violence scores for the specified year and time period.
+    """
+
+    extracted_data = data[(data.year==year) & (data.week >=start_week) & (data.week <=stop_week)]
+    weekly_score = extracted_data.groupby("week").size()
+    if ratio: 
+        weekly_score/=len(extracted_data)
+
+    return weekly_score
 
 
-def violence_score_all_states_count(directory_path: str, start_year: int, end_year: int, start_week: int, stop_week: int, 
-                                   ratio: bool = False, offenses: list = ['Assault Offenses', 'Robbery', 'Sex Offenses', 'Kidnapping/Abduction', 'Arson', 'Homicide Offenses']) -> dict:
+def violence_score_all_states_count(
+    directory_path: str, 
+    start_year: int, 
+    end_year: int, 
+    start_week: int, 
+    stop_week: int, 
+    ratio: bool = False, 
+    offenses: list = ['Assault Offenses', 'Robbery', 'Sex Offenses', 'Kidnapping/Abduction', 'Arson', 'Homicide Offenses']
+    ) -> pd.DataFrame:
    
+    """
+    Iterates through the directory where we store the CSV files with state-specific violence scores (counts),
+    loads every file into a dataframe and computes the real-life violence score for each state.
+
+    Args:
+    - directory_path (str): The path to the directory where the CSV files are stored.
+    - start_year (int): The starting year for the analysis.
+    - end_year (int): The ending year for the analysis.
+    - start_week (int): The starting week of the analysis period.
+    - stop_week (int): The ending week of the analysis period.
+    - ratio (bool, optional): Whether to return the ratio of violence score to total counts.
+    - offenses (list of str, optional): A list of offense categories to consider.
+
+    Returns:
+    - pd.Dataframe: A dataframe containing the real-life violence scores for all states merged.
+    """
 
     violence_scores_per_state = {}
 
