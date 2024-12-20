@@ -569,16 +569,18 @@ def violence_score_z_score_aggregated(
     ],
 ):
     """
-     Computes the aggregated z-score for violence across multiple offense categories over a specified time range.
-     Args:
-         data (pd.DataFrame): A DataFrame containing offense data
-          year (int): The year for which to compute the aggregated z-scores.
-         start_week (int): The starting week of the analysis period.
-         stop_week (int): The ending week of the analysis period.
-         window_size (int, optional): The rolling window size for calculating z-scores.
-          offenses (list of str, optional): A list of offense categories to consider.
+    Computes the aggregated z-score for violence across multiple offense categories over a specified time range.
+    
+    Args:
+    - data (pd.DataFrame): A DataFrame containing offense data
+    - year (int): The year for which to compute the aggregated z-scores.
+    - start_week (int): The starting week of the analysis period.
+    - stop_week (int): The ending week of the analysis period.
+    - window_size (int, optional): The rolling window size for calculating z-scores.
+    - offenses (list of str, optional): A list of offense categories to consider.
+
     Returns:
-         pd.DataFrame: A DataFrame containing the aggregated z-scores
+    - pd.DataFrame: A DataFrame containing the aggregated z-scores
     """
     z_score_per_category = real_life_violence_score_z_score(
         data, year, start_week, stop_week, window_size, offenses
@@ -603,7 +605,7 @@ def z_score_all_states_merged(
         "Arson",
         "Homicide Offenses",
     ],
-) -> dict:
+) -> pd.DataFrame:
     
     """
     Iterates through the directory where we store the CSV files with state-specific violence scores (counts),
@@ -619,7 +621,7 @@ def z_score_all_states_merged(
     - offenses (list of str, optional): A list of offense categories to consider.
 
     Returns:
-    - dict: A dictionary containing the z-scores for the aggregated violence scores for all states merged.
+    - pd.Dataframe: A dataframe containing the z-scores for the aggregated violence scores for all states merged.
 
     """
 
